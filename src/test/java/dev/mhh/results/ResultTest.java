@@ -3,9 +3,9 @@ package dev.mhh.results;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ResultTest {
     Result<Long, Long> success10 = Result.of(10L);
@@ -87,5 +87,37 @@ class ResultTest {
         assertTrue(error10.isError());
         assertEquals(Optional.of(10L), error10.error());
         assertEquals(Optional.empty(), error10.value());
+    }
+
+    @Test
+    void consumeWhenSuccess() {
+        final var consumed = new AtomicBoolean(false);
+        final var consumedResult = success10.consume(_ -> consumed.set(true));
+
+        assertTrue(success10.isSuccess());
+        assertEquals(Optional.of(10L), success10.value());
+        assertEquals(Optional.empty(), success10.error());
+
+        assertTrue(consumedResult.isSuccess());
+        assertEquals(Optional.of(10L), consumedResult.value());
+        assertEquals(Optional.empty(), consumedResult.error());
+
+        assertTrue(consumed.get());
+    }
+
+    @Test
+    void consumeWhenFailed() {
+        final var consumed = new AtomicBoolean(false);
+        final var consumedResult = error10.consume(_ -> consumed.set(true));
+
+        assertTrue(error10.isError());
+        assertEquals(Optional.empty(), error10.value());
+        assertEquals(Optional.of(10L), error10.error());
+
+        assertTrue(consumedResult.isError());
+        assertEquals(Optional.empty(), consumedResult.value());
+        assertEquals(Optional.of(10L), consumedResult.error());
+
+        assertFalse(consumed.get());
     }
 }

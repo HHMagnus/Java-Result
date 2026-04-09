@@ -1,6 +1,7 @@
 package dev.mhh.results;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Result<T, E> {
@@ -54,5 +55,10 @@ public class Result<T, E> {
         return isSuccess()
                 ? mapper.apply(value)
                 : error(error);
+    }
+
+    public Result<T, E> consume(Consumer<T> consumer) {
+        if (isSuccess()) consumer.accept(value);
+        return this;
     }
 }
