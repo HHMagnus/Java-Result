@@ -19,6 +19,17 @@ public record VoidOk<E>() implements VoidResult<E> {
     }
 
     @Override
+    public VoidResult<E> runIfOk(Runnable runnable) {
+        runnable.run();
+        return this;
+    }
+
+    @Override
+    public VoidResult<E> runIfError(Runnable runnable) {
+        return this;
+    }
+
+    @Override
     public boolean isError() {
         return false;
     }

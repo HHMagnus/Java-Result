@@ -2,10 +2,8 @@ package dev.mhh.results;
 
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
 
-public record VoidErr<T, E>(E err) implements VoidResult<E> {
+public record VoidErr<E>(E err) implements VoidResult<E> {
     public VoidErr {
         Objects.requireNonNull(err);
     }
@@ -23,6 +21,17 @@ public record VoidErr<T, E>(E err) implements VoidResult<E> {
     @Override
     public boolean isOk() {
         return false;
+    }
+
+    @Override
+    public VoidResult<E> runIfOk(Runnable runnable) {
+        return this;
+    }
+
+    @Override
+    public VoidResult<E> runIfError(Runnable runnable) {
+        runnable.run();
+        return this;
     }
 
     @Override
