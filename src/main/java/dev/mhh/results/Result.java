@@ -5,7 +5,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public sealed interface Result<T, E>
-        extends SharedResultMethods<E>
         permits Err, Ok {
 
     static <T, E> Result<T, E> ok(T value) {
@@ -17,6 +16,10 @@ public sealed interface Result<T, E>
     }
 
     Optional<T> value();
+    Optional<E> error();
+
+    boolean isError();
+    boolean isOk();
 
     <R> Result<R, E> map(Function<T, R> mapper);
     <R> Result<R, E> flatMap(Function<T, Result<R, E>> mapper);
