@@ -13,12 +13,14 @@ class ResultTest {
 
     private void assertUnchangedOk(Result<Long, Long> ok10) {
         assertTrue(ok10.isOk());
+        assertFalse(ok10.isError());
         assertEquals(Optional.of(10L), ok10.value());
         assertEquals(Optional.empty(), ok10.error());
     }
 
     private void assertUnchangedErr(Result<Long, Long> error10) {
         assertTrue(error10.isError());
+        assertFalse(error10.isOk());
         assertEquals(Optional.of(10L), error10.error());
         assertEquals(Optional.empty(), error10.value());
     }
