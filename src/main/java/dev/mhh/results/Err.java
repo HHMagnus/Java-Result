@@ -31,6 +31,17 @@ public record Err<T, E>(E err) implements Result<T, E>, VoidResult<E> {
     }
 
     @Override
+    public Result<T, E> runIfOk(Runnable runnable) {
+        return this;
+    }
+
+    @Override
+    public Result<T, E> runIfError(Runnable runnable) {
+        runnable.run();
+        return this;
+    }
+
+    @Override
     public boolean isError() {
         return true;
     }

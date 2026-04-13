@@ -21,6 +21,9 @@ public sealed interface Result<T, E>
     boolean isError();
     boolean isOk();
 
+    Result<T, E> runIfOk(Runnable runnable);
+    Result<T, E> runIfError(Runnable runnable);
+
     <R> Result<R, E> map(Function<T, R> mapper);
     <R> Result<R, E> flatMap(Function<T, Result<R, E>> mapper);
     Result<T, E> consume(Consumer<T> consumer);

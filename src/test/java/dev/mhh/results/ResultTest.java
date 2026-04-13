@@ -224,4 +224,71 @@ class ResultTest {
 
         assertFalse(consumed.get());
     }
+
+    @Test
+    void runIfOkWhenOk() {
+        final var consumed = new AtomicBoolean(false);
+
+        final var okRan = ok10.runIfOk(() -> consumed.set(true));
+
+        assertTrue(ok10.isOk());
+        assertEquals(Optional.of(10L), ok10.value());
+        assertEquals(Optional.empty(), ok10.error());
+
+        assertTrue(okRan.isOk());
+        assertEquals(Optional.of(10L), okRan.value());
+        assertEquals(Optional.empty(), okRan.error());
+
+        assertTrue(consumed.get());
+    }
+
+    @Test
+    void runIfOkWhenErr() {
+        final var consumed = new AtomicBoolean(false);
+
+        final var error10Ran = error10.runIfOk(() -> consumed.set(true));
+
+        assertTrue(error10.isError());
+        assertEquals(Optional.of(10L), error10.error());
+        assertEquals(Optional.empty(), error10.value());
+
+        assertTrue(error10Ran.isError());
+        assertEquals(Optional.of(10L), error10Ran.error());
+        assertEquals(Optional.empty(), error10Ran.value());
+
+        assertFalse(consumed.get());
+    }
+
+    @Test
+    void runIfErrorWhenOk() {
+        final var consumed = new AtomicBoolean(false);
+
+        final var ok10Ran = ok10.runIfError(() -> consumed.set(true));
+
+        assertTrue(ok10.isOk());
+        assertEquals(Optional.of(10L), ok10.value());
+        assertEquals(Optional.empty(), ok10.error());
+
+        assertTrue(ok10Ran.isOk());
+        assertEquals(Optional.of(10L), ok10Ran.value());
+        assertEquals(Optional.empty(), ok10Ran.error());
+
+        assertFalse(consumed.get());
+    }
+    @Test
+    void runIfErrorWhenErr() {
+        final var consumed = new AtomicBoolean(false);
+
+        final var error10Ran = error10.runIfError(() -> consumed.set(true));
+
+        assertTrue(error10.isError());
+        assertEquals(Optional.of(10L), error10.error());
+        assertEquals(Optional.empty(), error10.value());
+
+        assertTrue(error10Ran.isError());
+        assertEquals(Optional.of(10L), error10Ran.error());
+        assertEquals(Optional.empty(), error10Ran.value());
+
+        assertTrue(consumed.get());
+    }
 }

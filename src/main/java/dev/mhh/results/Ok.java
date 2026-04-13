@@ -31,6 +31,17 @@ public record Ok<T, E>(T ok) implements Result<T, E> {
     }
 
     @Override
+    public Result<T, E> runIfOk(Runnable runnable) {
+        runnable.run();
+        return this;
+    }
+
+    @Override
+    public Result<T, E> runIfError(Runnable runnable) {
+        return this;
+    }
+
+    @Override
     public boolean isError() {
         return false;
     }
