@@ -3,13 +3,13 @@ package dev.mhh.results;
 import java.util.Optional;
 
 public sealed interface VoidResult<E>
-        permits Err, VoidOk {
+        permits VoidErr, VoidOk {
     static <E> VoidResult<E> ok() {
         return new VoidOk<>();
     }
 
     static <E> VoidResult<E> err(E err) {
-        return new Err<>(err);
+        return new VoidErr<>(err);
     }
 
     Optional<E> error();

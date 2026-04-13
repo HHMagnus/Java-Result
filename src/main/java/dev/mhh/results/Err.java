@@ -5,7 +5,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public record Err<T, E>(E err) implements Result<T, E>, VoidResult<E> {
+public record Err<T, E>(E err) implements Result<T, E> {
     public Err {
         Objects.requireNonNull(err);
     }
@@ -64,10 +64,5 @@ public record Err<T, E>(E err) implements Result<T, E>, VoidResult<E> {
     @Override
     public Result<T, E> flatConsume(Function<T, VoidResult<E>> consumer) {
         return this;
-    }
-
-    @Override
-    public <R> Result<R, E> replace(R value) {
-        return Result.err(err);
     }
 }
