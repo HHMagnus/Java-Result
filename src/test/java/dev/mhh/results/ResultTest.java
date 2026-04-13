@@ -11,6 +11,18 @@ class ResultTest {
     Result<Long, Long> ok10 = Result.ok(10L);
     Result<Long, Long> error10 = Result.err(10L);
 
+    private void assertUnchangedOk(Result<Long, Long> ok10) {
+        assertTrue(ok10.isOk());
+        assertEquals(Optional.of(10L), ok10.value());
+        assertEquals(Optional.empty(), ok10.error());
+    }
+
+    private void assertUnchangedErr(Result<Long, Long> error10) {
+        assertTrue(error10.isError());
+        assertEquals(Optional.of(10L), error10.error());
+        assertEquals(Optional.empty(), error10.value());
+    }
+
     @Test
     void ok() {
         final var success = Result.ok(10L);
@@ -43,10 +55,7 @@ class ResultTest {
         assertEquals(Optional.of(20L), ok20.value());
         assertEquals(Optional.empty(), ok20.error());
 
-        assertTrue(ok10.isOk());
-        assertEquals(Optional.of(10L), ok10.value());
-        assertEquals(Optional.empty(), ok10.error());
-
+        assertUnchangedOk(ok10);
     }
 
     @Test
@@ -57,9 +66,7 @@ class ResultTest {
         assertEquals(Optional.of(10L), error20.error());
         assertEquals(Optional.empty(), error20.value());
 
-        assertTrue(error10.isError());
-        assertEquals(Optional.of(10L), error10.error());
-        assertEquals(Optional.empty(), error10.value());
+        assertUnchangedErr(error10);
     }
 
     @Test
@@ -70,51 +77,35 @@ class ResultTest {
         assertEquals(Optional.of(20L), ok20.value());
         assertEquals(Optional.empty(), ok20.error());
 
-        assertTrue(ok10.isOk());
-        assertEquals(Optional.of(10L), ok10.value());
-        assertEquals(Optional.empty(), ok10.error());
-
+        assertUnchangedOk(ok10);
     }
 
     @Test
     void flatMapWhenErr() {
         final var error20 = error10.flatMap(x -> Result.ok(x * 2));
 
-        assertTrue(error20.isError());
-        assertEquals(Optional.of(10L), error20.error());
-        assertEquals(Optional.empty(), error20.value());
-
-        assertTrue(error10.isError());
-        assertEquals(Optional.of(10L), error10.error());
-        assertEquals(Optional.empty(), error10.value());
+        assertUnchangedErr(error20);
+        assertUnchangedErr(error10);
     }
 
 
     @Test
     void flatMapErrWhenOk() {
-        final var ok20 = ok10.flatMap(x -> Result.ok(x * 2));
+        final var ok20 = ok10.flatMap(x -> Result.err(20L));
 
-        assertTrue(ok20.isOk());
-        assertEquals(Optional.of(20L), ok20.value());
-        assertEquals(Optional.empty(), ok20.error());
+        assertTrue(ok20.isError());
+        assertEquals(Optional.empty(), ok20.value());
+        assertEquals(Optional.of(20L), ok20.error());
 
-        assertTrue(ok10.isOk());
-        assertEquals(Optional.of(10L), ok10.value());
-        assertEquals(Optional.empty(), ok10.error());
-
+        assertUnchangedOk(ok10);
     }
 
     @Test
     void flatMapErrWhenErr() {
-        final var error20 = error10.flatMap(x -> Result.ok(x * 2));
+        final var error20 = error10.flatMap(x -> Result.<Long, Long>err(x * 250));
 
-        assertTrue(error20.isError());
-        assertEquals(Optional.of(10L), error20.error());
-        assertEquals(Optional.empty(), error20.value());
-
-        assertTrue(error10.isError());
-        assertEquals(Optional.of(10L), error10.error());
-        assertEquals(Optional.empty(), error10.value());
+        assertUnchangedErr(error20);
+        assertUnchangedErr(error10);
     }
 
     @Test
@@ -122,13 +113,8 @@ class ResultTest {
         final var consumed = new AtomicBoolean(false);
         final var consumedResult = ok10.consume(_ -> consumed.set(true));
 
-        assertTrue(ok10.isOk());
-        assertEquals(Optional.of(10L), ok10.value());
-        assertEquals(Optional.empty(), ok10.error());
-
-        assertTrue(consumedResult.isOk());
-        assertEquals(Optional.of(10L), consumedResult.value());
-        assertEquals(Optional.empty(), consumedResult.error());
+        assertUnchangedOk(consumedResult);
+        assertUnchangedOk(ok10);
 
         assertTrue(consumed.get());
     }
@@ -138,13 +124,8 @@ class ResultTest {
         final var consumed = new AtomicBoolean(false);
         final var consumedResult = error10.consume(_ -> consumed.set(true));
 
-        assertTrue(error10.isError());
-        assertEquals(Optional.empty(), error10.value());
-        assertEquals(Optional.of(10L), error10.error());
-
-        assertTrue(consumedResult.isError());
-        assertEquals(Optional.empty(), consumedResult.value());
-        assertEquals(Optional.of(10L), consumedResult.error());
+        assertUnchangedErr(consumedResult);
+        assertUnchangedErr(error10);
 
         assertFalse(consumed.get());
     }
@@ -157,13 +138,8 @@ class ResultTest {
             return VoidResult.ok();
         });
 
-        assertTrue(not20.isOk());
-        assertEquals(Optional.of(10L), not20.value());
-        assertEquals(Optional.empty(), not20.error());
-
-        assertTrue(ok10.isOk());
-        assertEquals(Optional.of(10L), ok10.value());
-        assertEquals(Optional.empty(), ok10.error());
+        assertUnchangedOk(not20);
+        assertUnchangedOk(ok10);
 
         assertTrue(consumed.get());
     }
@@ -176,13 +152,8 @@ class ResultTest {
             return VoidResult.ok();
         });
 
-        assertTrue(error20.isError());
-        assertEquals(Optional.of(10L), error20.error());
-        assertEquals(Optional.empty(), error20.value());
-
-        assertTrue(error10.isError());
-        assertEquals(Optional.of(10L), error10.error());
-        assertEquals(Optional.empty(), error10.value());
+        assertUnchangedErr(error20);
+        assertUnchangedErr(error10);
 
         assertFalse(consumed.get());
     }
@@ -190,18 +161,16 @@ class ResultTest {
     @Test
     void flatConsumeErrWhenSuccess() {
         final var consumed = new AtomicBoolean(false);
-        final var not10 = ok10.flatConsume(x -> {
+        final var err250 = ok10.flatConsume(x -> {
             consumed.set(true);
             return VoidResult.err(250L);
         });
 
-        assertTrue(not10.isError());
-        assertEquals(Optional.empty(), not10.value());
-        assertEquals(Optional.of(250L), not10.error());
+        assertTrue(err250.isError());
+        assertEquals(Optional.of(250L), err250.error());
+        assertEquals(Optional.empty(), err250.value());
 
-        assertTrue(ok10.isOk());
-        assertEquals(Optional.of(10L), ok10.value());
-        assertEquals(Optional.empty(), ok10.error());
+        assertUnchangedOk(ok10);
 
         assertTrue(consumed.get());
     }
@@ -214,13 +183,8 @@ class ResultTest {
             return VoidResult.err(250L);
         });
 
-        assertTrue(error10Still.isError());
-        assertEquals(Optional.of(10L), error10Still.error());
-        assertEquals(Optional.empty(), error10Still.value());
-
-        assertTrue(error10.isError());
-        assertEquals(Optional.of(10L), error10.error());
-        assertEquals(Optional.empty(), error10.value());
+        assertUnchangedErr(error10Still);
+        assertUnchangedErr(error10);
 
         assertFalse(consumed.get());
     }
@@ -231,13 +195,8 @@ class ResultTest {
 
         final var okRan = ok10.runIfOk(() -> consumed.set(true));
 
-        assertTrue(ok10.isOk());
-        assertEquals(Optional.of(10L), ok10.value());
-        assertEquals(Optional.empty(), ok10.error());
-
-        assertTrue(okRan.isOk());
-        assertEquals(Optional.of(10L), okRan.value());
-        assertEquals(Optional.empty(), okRan.error());
+        assertUnchangedOk(okRan);
+        assertUnchangedOk(ok10);
 
         assertTrue(consumed.get());
     }
@@ -248,13 +207,8 @@ class ResultTest {
 
         final var error10Ran = error10.runIfOk(() -> consumed.set(true));
 
-        assertTrue(error10.isError());
-        assertEquals(Optional.of(10L), error10.error());
-        assertEquals(Optional.empty(), error10.value());
-
-        assertTrue(error10Ran.isError());
-        assertEquals(Optional.of(10L), error10Ran.error());
-        assertEquals(Optional.empty(), error10Ran.value());
+        assertUnchangedErr(error10Ran);
+        assertUnchangedErr(error10);
 
         assertFalse(consumed.get());
     }
@@ -265,13 +219,8 @@ class ResultTest {
 
         final var ok10Ran = ok10.runIfError(() -> consumed.set(true));
 
-        assertTrue(ok10.isOk());
-        assertEquals(Optional.of(10L), ok10.value());
-        assertEquals(Optional.empty(), ok10.error());
-
-        assertTrue(ok10Ran.isOk());
-        assertEquals(Optional.of(10L), ok10Ran.value());
-        assertEquals(Optional.empty(), ok10Ran.error());
+        assertUnchangedOk(ok10Ran);
+        assertUnchangedOk(ok10);
 
         assertFalse(consumed.get());
     }
@@ -281,13 +230,8 @@ class ResultTest {
 
         final var error10Ran = error10.runIfError(() -> consumed.set(true));
 
-        assertTrue(error10.isError());
-        assertEquals(Optional.of(10L), error10.error());
-        assertEquals(Optional.empty(), error10.value());
-
-        assertTrue(error10Ran.isError());
-        assertEquals(Optional.of(10L), error10Ran.error());
-        assertEquals(Optional.empty(), error10Ran.value());
+        assertUnchangedErr(error10Ran);
+        assertUnchangedErr(error10);
 
         assertTrue(consumed.get());
     }
