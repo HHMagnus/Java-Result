@@ -52,6 +52,12 @@ public sealed interface Result<T, E> {
             consumer.accept(ok);
             return this;
         }
+
+        @Override
+        public Result<T, E> flatConsume(Function<T, VoidResult<E>> consumer) {
+            final var voidResult = consumer.apply(ok);
+            return voidResult.replace(ok);
+        }
     }
 
     record Err<T, E>(E err) implements Result<T, E>{
@@ -98,6 +104,11 @@ public sealed interface Result<T, E> {
         public Result<T, E> consume(Consumer<T> consumer) {
             return this;
         }
+
+        @Override
+        public Result<T, E> flatConsume(Function<T, VoidResult<E>> consumer) {
+            return this;
+        }
     }
 
     static <T, E> Result<T, E> ok(T value) {
@@ -117,4 +128,5 @@ public sealed interface Result<T, E> {
     <R> Result<R, E> map(Function<T, R> mapper);
     <R> Result<R, E> flatMap(Function<T, Result<R, E>> mapper);
     Result<T, E> consume(Consumer<T> consumer);
+    Result<T, E> flatConsume(Function<T, VoidResult<E>> consumer);
 }

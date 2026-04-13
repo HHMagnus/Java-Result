@@ -12,7 +12,7 @@ class ResultTest {
     Result<Long, Long> error10 = Result.err(10L);
 
     @Test
-    void of() {
+    void ok() {
         final var success = Result.ok(10L);
 
         assertTrue(success.isOk());
@@ -21,7 +21,7 @@ class ResultTest {
     }
 
     @Test
-    void error() {
+    void err() {
         final var error = Result.err(10L);
 
         assertTrue(error.isError());
@@ -36,7 +36,7 @@ class ResultTest {
     }
 
     @Test
-    void mapWhenSuccess() {
+    void mapWhenOk() {
         final var ok20 = ok10.map(x -> x * 2);
 
         assertTrue(ok20.isOk());
@@ -50,7 +50,7 @@ class ResultTest {
     }
 
     @Test
-    void mapWhenError() {
+    void mapWhenErr() {
         final var error20 = error10.map(x -> x * 2);
 
         assertTrue(error20.isError());
@@ -63,7 +63,7 @@ class ResultTest {
     }
 
     @Test
-    void flatMapWhenSuccess() {
+    void flatMapWhenOk() {
         final var ok20 = ok10.flatMap(x -> Result.ok(x * 2));
 
         assertTrue(ok20.isOk());
@@ -77,7 +77,35 @@ class ResultTest {
     }
 
     @Test
-    void flatMapWhenError() {
+    void flatMapWhenErr() {
+        final var error20 = error10.flatMap(x -> Result.ok(x * 2));
+
+        assertTrue(error20.isError());
+        assertEquals(Optional.of(10L), error20.error());
+        assertEquals(Optional.empty(), error20.value());
+
+        assertTrue(error10.isError());
+        assertEquals(Optional.of(10L), error10.error());
+        assertEquals(Optional.empty(), error10.value());
+    }
+
+
+    @Test
+    void flatMapErrWhenOk() {
+        final var ok20 = ok10.flatMap(x -> Result.ok(x * 2));
+
+        assertTrue(ok20.isOk());
+        assertEquals(Optional.of(20L), ok20.value());
+        assertEquals(Optional.empty(), ok20.error());
+
+        assertTrue(ok10.isOk());
+        assertEquals(Optional.of(10L), ok10.value());
+        assertEquals(Optional.empty(), ok10.error());
+
+    }
+
+    @Test
+    void flatMapErrWhenErr() {
         final var error20 = error10.flatMap(x -> Result.ok(x * 2));
 
         assertTrue(error20.isError());
@@ -90,7 +118,7 @@ class ResultTest {
     }
 
     @Test
-    void consumeWhenSuccess() {
+    void consumeWhenOk() {
         final var consumed = new AtomicBoolean(false);
         final var consumedResult = ok10.consume(_ -> consumed.set(true));
 
@@ -106,7 +134,7 @@ class ResultTest {
     }
 
     @Test
-    void consumeWhenFailed() {
+    void consumeWhenErr() {
         final var consumed = new AtomicBoolean(false);
         final var consumedResult = error10.consume(_ -> consumed.set(true));
 
@@ -117,6 +145,82 @@ class ResultTest {
         assertTrue(consumedResult.isError());
         assertEquals(Optional.empty(), consumedResult.value());
         assertEquals(Optional.of(10L), consumedResult.error());
+
+        assertFalse(consumed.get());
+    }
+
+    @Test
+    void flatConsumeWhenSuccess() {
+        final var consumed = new AtomicBoolean(false);
+        final var not20 = ok10.flatConsume(x -> {
+            consumed.set(true);
+            return VoidResult.ok();
+        });
+
+        assertTrue(not20.isOk());
+        assertEquals(Optional.of(10L), not20.value());
+        assertEquals(Optional.empty(), not20.error());
+
+        assertTrue(ok10.isOk());
+        assertEquals(Optional.of(10L), ok10.value());
+        assertEquals(Optional.empty(), ok10.error());
+
+        assertTrue(consumed.get());
+    }
+
+    @Test
+    void flatConsumeWhenError() {
+        final var consumed = new AtomicBoolean(false);
+        final var error20 = error10.flatConsume(x -> {
+            consumed.set(true);
+            return VoidResult.ok();
+        });
+
+        assertTrue(error20.isError());
+        assertEquals(Optional.of(10L), error20.error());
+        assertEquals(Optional.empty(), error20.value());
+
+        assertTrue(error10.isError());
+        assertEquals(Optional.of(10L), error10.error());
+        assertEquals(Optional.empty(), error10.value());
+
+        assertFalse(consumed.get());
+    }
+
+    @Test
+    void flatConsumeErrWhenSuccess() {
+        final var consumed = new AtomicBoolean(false);
+        final var not10 = ok10.flatConsume(x -> {
+            consumed.set(true);
+            return VoidResult.err(250L);
+        });
+
+        assertTrue(not10.isError());
+        assertEquals(Optional.empty(), not10.value());
+        assertEquals(Optional.of(250L), not10.error());
+
+        assertTrue(ok10.isOk());
+        assertEquals(Optional.of(10L), ok10.value());
+        assertEquals(Optional.empty(), ok10.error());
+
+        assertTrue(consumed.get());
+    }
+
+    @Test
+    void flatConsumeErrWhenError() {
+        final var consumed = new AtomicBoolean(false);
+        final var error10Still = error10.flatConsume(x -> {
+            consumed.set(true);
+            return VoidResult.err(250L);
+        });
+
+        assertTrue(error10Still.isError());
+        assertEquals(Optional.of(10L), error10Still.error());
+        assertEquals(Optional.empty(), error10Still.value());
+
+        assertTrue(error10.isError());
+        assertEquals(Optional.of(10L), error10.error());
+        assertEquals(Optional.empty(), error10.value());
 
         assertFalse(consumed.get());
     }
