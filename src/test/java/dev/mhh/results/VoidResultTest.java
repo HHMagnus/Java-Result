@@ -10,12 +10,29 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class VoidResultTest {
+    VoidResult<Long> ok = VoidResult.ok();
     VoidResult<Long> error10 = VoidResult.err(10L);
+
+    private void assertUnchangedOk(VoidResult<Long> ok) {
+        assertTrue(ok.isOk());
+        assertFalse(ok.isError());
+        assertEquals(Optional.empty(), ok.error());
+    }
 
     private void assertUnchangedErr(VoidResult<Long> error10) {
         assertTrue(error10.isError());
         assertFalse(error10.isOk());
         assertEquals(Optional.of(10L), error10.error());
+    }
+
+    @Test
+    void manualCreation() {
+        final var ok = new VoidOk<Long>();
+        assertUnchangedOk(ok);
+
+        final var err = new VoidErr<>(10L);
+        assertUnchangedErr(err);
+        assertThrows(NullPointerException.class, () -> new VoidErr<>(null));
     }
 
     @Test
@@ -47,11 +64,10 @@ class VoidResultTest {
 
     @Test
     void replaceWhenOk() {
-        final var success = VoidResult.ok();
+        final var replaced = ok.replace(10L);
 
-        final var replaced = success.replace(10L);
+        assertUnchangedOk(ok);
 
-        assertTrue(success.isOk());
         assertTrue(replaced.isOk());
         assertEquals(Optional.of(10L), replaced.value());
         assertEquals(Optional.empty(), replaced.error());
@@ -72,9 +88,10 @@ class VoidResultTest {
     void runIfOkWhenOk() {
         final var consumed = new AtomicBoolean(false);
 
-        final var okRan = VoidResult.ok().runIfOk(() -> consumed.set(true));
+        final var okRan = ok.runIfOk(() -> consumed.set(true));
 
-        assertTrue(okRan.isOk());
+        assertUnchangedOk(okRan);
+        assertUnchangedOk(ok);
 
         assertTrue(consumed.get());
     }
@@ -95,9 +112,10 @@ class VoidResultTest {
     void runIfErrorWhenOk() {
         final var consumed = new AtomicBoolean(false);
 
-        final var ok10Ran = VoidResult.ok().runIfError(() -> consumed.set(true));
+        final var okRan = ok.runIfError(() -> consumed.set(true));
 
-        assertTrue(ok10Ran.isOk());
+        assertUnchangedOk(okRan);
+        assertUnchangedOk(ok);
 
         assertFalse(consumed.get());
     }
@@ -116,9 +134,10 @@ class VoidResultTest {
     @Test
     void consumeErrorWhenOk() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = VoidResult.ok().consumeError(_ -> consumed.set(true));
+        final var consumedResult = ok.consumeError(_ -> consumed.set(true));
 
-        assertTrue(consumedResult.isOk());
+        assertUnchangedOk(consumedResult);
+        assertUnchangedOk(ok);
 
         assertFalse(consumed.get());
     }
