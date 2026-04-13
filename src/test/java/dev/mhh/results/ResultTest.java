@@ -257,4 +257,26 @@ class ResultTest {
 
         assertUnchangedErr(error10);
     }
+
+    @Test
+    void consumeErrorWhenOk() {
+        final var consumed = new AtomicBoolean(false);
+        final var consumedResult = ok10.consumeError(_ -> consumed.set(true));
+
+        assertUnchangedOk(consumedResult);
+        assertUnchangedOk(ok10);
+
+        assertFalse(consumed.get());
+    }
+
+    @Test
+    void consumeErrorWhenErr() {
+        final var consumed = new AtomicBoolean(false);
+        final var consumedResult = error10.consumeError(_ -> consumed.set(true));
+
+        assertUnchangedErr(consumedResult);
+        assertUnchangedErr(error10);
+
+        assertTrue(consumed.get());
+    }
 }

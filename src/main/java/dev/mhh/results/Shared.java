@@ -1,6 +1,7 @@
 package dev.mhh.results;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 interface Shared<E, T extends Shared<E, T>> {
     Optional<E> error();
@@ -10,4 +11,6 @@ interface Shared<E, T extends Shared<E, T>> {
 
     T runIfOk(Runnable runnable);
     T runIfError(Runnable runnable);
+
+    T consumeError(Consumer<E> consumer);
 }

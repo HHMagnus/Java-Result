@@ -2,6 +2,7 @@ package dev.mhh.results;
 
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public record VoidErr<E>(E err) implements VoidResult<E> {
     public VoidErr {
@@ -31,6 +32,12 @@ public record VoidErr<E>(E err) implements VoidResult<E> {
     @Override
     public VoidResult<E> runIfError(Runnable runnable) {
         runnable.run();
+        return this;
+    }
+
+    @Override
+    public VoidResult<E> consumeError(Consumer<E> consumer) {
+        consumer.accept(err);
         return this;
     }
 

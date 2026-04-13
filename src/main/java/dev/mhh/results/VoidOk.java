@@ -1,6 +1,7 @@
 package dev.mhh.results;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public record VoidOk<E>() implements VoidResult<E> {
     @Override
@@ -26,6 +27,11 @@ public record VoidOk<E>() implements VoidResult<E> {
 
     @Override
     public VoidResult<E> runIfError(Runnable runnable) {
+        return this;
+    }
+
+    @Override
+    public VoidResult<E> consumeError(Consumer<E> consumer) {
         return this;
     }
 

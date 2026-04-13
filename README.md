@@ -1,7 +1,6 @@
 Result
 
 TODO:
-- consumeError
 - flatConsumeError
 - verify - error given and result given
 - combine

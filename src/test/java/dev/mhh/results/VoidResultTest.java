@@ -112,4 +112,25 @@ class VoidResultTest {
 
         assertTrue(consumed.get());
     }
+
+    @Test
+    void consumeErrorWhenOk() {
+        final var consumed = new AtomicBoolean(false);
+        final var consumedResult = VoidResult.ok().consumeError(_ -> consumed.set(true));
+
+        assertTrue(consumedResult.isOk());
+
+        assertFalse(consumed.get());
+    }
+
+    @Test
+    void consumeErrorWhenErr() {
+        final var consumed = new AtomicBoolean(false);
+        final var consumedResult = error10.consumeError(_ -> consumed.set(true));
+
+        assertUnchangedErr(consumedResult);
+        assertUnchangedErr(error10);
+
+        assertTrue(consumed.get());
+    }
 }

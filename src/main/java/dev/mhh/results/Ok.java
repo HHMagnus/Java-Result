@@ -42,6 +42,11 @@ public record Ok<T, E>(T ok) implements Result<T, E> {
     }
 
     @Override
+    public Result<T, E> consumeError(Consumer<E> consumer) {
+        return this;
+    }
+
+    @Override
     public boolean isError() {
         return false;
     }

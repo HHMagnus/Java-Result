@@ -42,6 +42,12 @@ public record Err<T, E>(E err) implements Result<T, E> {
     }
 
     @Override
+    public Result<T, E> consumeError(Consumer<E> consumer) {
+        consumer.accept(err);
+        return this;
+    }
+
+    @Override
     public boolean isError() {
         return true;
     }
