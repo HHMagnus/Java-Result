@@ -8,6 +8,5 @@ TODO:
 - flatCombine
 - OptionalResult
 - OptionalResult all methods + value
-- Result.toVoidResult
 - List of results to result of list
 - BooleanResult ???

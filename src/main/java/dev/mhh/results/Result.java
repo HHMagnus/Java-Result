@@ -22,4 +22,6 @@ public sealed interface Result<T, E>
     <R> Result<R, E> flatMap(Function<T, Result<R, E>> mapper);
     Result<T, E> consume(Consumer<T> consumer);
     Result<T, E> flatConsume(Function<T, VoidResult<E>> consumer);
+
+    VoidResult<E> toVoidResult();
 }

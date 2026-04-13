@@ -65,4 +65,9 @@ public record Err<T, E>(E err) implements Result<T, E> {
     public Result<T, E> flatConsume(Function<T, VoidResult<E>> consumer) {
         return this;
     }
+
+    @Override
+    public VoidResult<E> toVoidResult() {
+        return VoidResult.err(err);
+    }
 }

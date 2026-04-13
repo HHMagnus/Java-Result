@@ -68,4 +68,9 @@ public record Ok<T, E>(T ok) implements Result<T, E> {
         final var voidResult = consumer.apply(ok);
         return voidResult.replace(ok);
     }
+
+    @Override
+    public VoidResult<E> toVoidResult() {
+        return VoidResult.ok();
+    }
 }

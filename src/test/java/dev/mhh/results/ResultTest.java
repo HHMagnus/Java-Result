@@ -237,4 +237,24 @@ class ResultTest {
 
         assertTrue(consumed.get());
     }
+
+    @Test
+    void toVoidResultWhenOk() {
+        final var voidResult = ok10.toVoidResult();
+
+        assertTrue(voidResult.isOk());
+
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void toVoidResultWhenErr() {
+        final var voidResult = error10.toVoidResult();
+
+        assertTrue(voidResult.isError());
+        assertFalse(voidResult.isOk());
+        assertEquals(Optional.of(10L), voidResult.error());
+
+        assertUnchangedErr(error10);
+    }
 }
