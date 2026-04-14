@@ -13,4 +13,3 @@ TODO:
 - OptionalResult toResult
 - OptionalResult toVoidResult
 - VoidResult toResult ??? instead of replace
-- VoidResult toVoidResult ??

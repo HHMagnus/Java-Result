@@ -291,4 +291,23 @@ class ResultTest {
 
         assertTrue(consumed.get());
     }
+
+    @Test
+    void toOptionalResultWhenOk() {
+        final var optionalResult = ok10.toOptionalResult();
+
+        assertTrue(optionalResult.isOk());
+        assertEquals(Optional.of(10L), optionalResult.optionalValue());
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void toOptionalResultWhenErr() {
+        final var optionalResult = error10.toOptionalResult();
+
+        assertTrue(optionalResult.isError());
+        assertEquals(Optional.empty(), optionalResult.optionalValue());
+        assertEquals(Optional.of(10L), optionalResult.error());
+        assertUnchangedErr(error10);
+    }
 }

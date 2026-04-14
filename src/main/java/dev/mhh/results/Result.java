@@ -24,4 +24,5 @@ public sealed interface Result<T, E>
     Result<T, E> flatConsume(Function<T, VoidResult<E>> consumer);
 
     VoidResult<E> toVoidResult();
+    OptionalResult<T, E> toOptionalResult();
 }

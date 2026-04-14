@@ -76,4 +76,9 @@ public record Err<T, E>(E err) implements Result<T, E> {
     public VoidResult<E> toVoidResult() {
         return VoidResult.err(err);
     }
+
+    @Override
+    public OptionalResult<T, E> toOptionalResult() {
+        return OptionalResult.err(err);
+    }
 }

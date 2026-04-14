@@ -78,4 +78,9 @@ public record Ok<T, E>(T ok) implements Result<T, E> {
     public VoidResult<E> toVoidResult() {
         return VoidResult.ok();
     }
+
+    @Override
+    public OptionalResult<T, E> toOptionalResult() {
+        return OptionalResult.ok(ok);
+    }
 }
