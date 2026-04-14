@@ -1,10 +1,11 @@
 package dev.mhh.result;
 
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public record VoidOk<E>() implements VoidResult<E> {
+public record VoidOk<E>() implements VoidResult<E>, Serializable {
     @Override
     public String toString() {
         return "Ok";

@@ -11,5 +11,3 @@ TODO:
 - List of results to result of list
 - java docs
 - Consider names of inner values vs. access with Optional calls
-- Equals and HashCode methods
-- Serializable

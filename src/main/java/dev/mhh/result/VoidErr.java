@@ -1,11 +1,12 @@
 package dev.mhh.result;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public record VoidErr<E>(E err) implements VoidResult<E> {
+public record VoidErr<E>(E err) implements VoidResult<E>, Serializable {
     public VoidErr {
         Objects.requireNonNull(err);
     }

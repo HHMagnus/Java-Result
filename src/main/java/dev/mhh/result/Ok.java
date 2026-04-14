@@ -1,11 +1,12 @@
 package dev.mhh.result;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public record Ok<T, E>(T ok) implements Result<T, E> {
+public record Ok<T, E>(T ok) implements Result<T, E>, Serializable {
     @Override
     public String toString() {
         return "Ok[" + ok + ']';

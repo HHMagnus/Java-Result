@@ -1,11 +1,12 @@
 package dev.mhh.result;
 
+import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public record Empty<T, E>() implements OptionalResult<T, E> {
+public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     @Override
     public Optional<T> optionalValue() {
         return Optional.empty();

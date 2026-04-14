@@ -1,12 +1,13 @@
 package dev.mhh.result;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public record Present<T, E>(T value) implements OptionalResult<T, E> {
+public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializable {
     public Present {
         Objects.requireNonNull(value);
     }
