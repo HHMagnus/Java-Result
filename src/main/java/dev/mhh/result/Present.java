@@ -1,17 +1,17 @@
-package dev.mhh.results;
+package dev.mhh.result;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public record Empty<T, E>() implements OptionalResult<T, E> {
-    @Override
-    public Optional<T> optionalValue() {
-        return Optional.empty();
+public record Present<T, E>(T value) implements OptionalResult<T, E> {
+    public Present {
+        Objects.requireNonNull(value);
     }
 
     @Override
     public String toString() {
-        return "Empty";
+        return "Present[" + value + ']';
     }
 
     @Override
@@ -43,5 +43,10 @@ public record Empty<T, E>() implements OptionalResult<T, E> {
     @Override
     public OptionalResult<T, E> consumeError(Consumer<E> consumer) {
         return this;
+    }
+
+    @Override
+    public Optional<T> optionalValue() {
+        return Optional.of(value);
     }
 }

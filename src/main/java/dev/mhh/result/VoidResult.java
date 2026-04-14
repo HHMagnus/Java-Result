@@ -1,4 +1,4 @@
-package dev.mhh.results;
+package dev.mhh.result;
 
 public sealed interface VoidResult<E>
         extends Shared<E, VoidResult<E>>

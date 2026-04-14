@@ -1,4 +1,4 @@
-package dev.mhh.results;
+package dev.mhh.result;
 
 import java.util.Objects;
 import java.util.Optional;

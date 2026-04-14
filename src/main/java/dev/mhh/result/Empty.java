@@ -1,53 +1,47 @@
-package dev.mhh.results;
+package dev.mhh.result;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public record OptErr<T, E>(E err) implements OptionalResult<T, E>{
-    public OptErr {
-        Objects.requireNonNull(err);
-    }
-
+public record Empty<T, E>() implements OptionalResult<T, E> {
     @Override
     public Optional<T> optionalValue() {
         return Optional.empty();
     }
 
     @Override
+    public String toString() {
+        return "Empty";
+    }
+
+    @Override
     public Optional<E> error() {
-        return Optional.of(err);
+        return Optional.empty();
     }
 
     @Override
     public boolean isError() {
-        return true;
-    }
-
-    @Override
-    public boolean isOk() {
         return false;
     }
 
     @Override
-    public OptionalResult<T, E> runIfOk(Runnable runnable) {
-        return this;
+    public boolean isOk() {
+        return true;
     }
 
     @Override
-    public OptionalResult<T, E> runIfError(Runnable runnable) {
+    public OptionalResult<T, E> runIfOk(Runnable runnable) {
         runnable.run();
         return this;
     }
 
     @Override
-    public String toString() {
-        return "OptErr[" + err + ']';
+    public OptionalResult<T, E> runIfError(Runnable runnable) {
+        return this;
     }
 
     @Override
     public OptionalResult<T, E> consumeError(Consumer<E> consumer) {
-        consumer.accept(err);
         return this;
     }
 }

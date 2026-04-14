@@ -9,7 +9,6 @@ TODO:
 - OptionalResult existing for value present
 - List of results to result of list
 - java docs
-- rename results -> result
 - OptionalResult toResult
 - OptionalResult toVoidResult
 - VoidResult toOptionalResult

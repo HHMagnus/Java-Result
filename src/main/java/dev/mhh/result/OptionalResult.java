@@ -1,4 +1,4 @@
-package dev.mhh.results;
+package dev.mhh.result;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package dev.mhh.results;
+package dev.mhh.result;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

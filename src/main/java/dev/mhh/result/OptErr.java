@@ -1,52 +1,53 @@
-package dev.mhh.results;
+package dev.mhh.result;
 
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public record Present<T, E>(T value) implements OptionalResult<T, E> {
-    public Present {
-        Objects.requireNonNull(value);
+public record OptErr<T, E>(E err) implements OptionalResult<T, E>{
+    public OptErr {
+        Objects.requireNonNull(err);
     }
 
     @Override
-    public String toString() {
-        return "Present[" + value + ']';
-    }
-
-    @Override
-    public Optional<E> error() {
+    public Optional<T> optionalValue() {
         return Optional.empty();
     }
 
     @Override
-    public boolean isError() {
-        return false;
+    public Optional<E> error() {
+        return Optional.of(err);
     }
 
     @Override
-    public boolean isOk() {
+    public boolean isError() {
         return true;
     }
 
     @Override
+    public boolean isOk() {
+        return false;
+    }
+
+    @Override
     public OptionalResult<T, E> runIfOk(Runnable runnable) {
-        runnable.run();
         return this;
     }
 
     @Override
     public OptionalResult<T, E> runIfError(Runnable runnable) {
+        runnable.run();
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return "OptErr[" + err + ']';
     }
 
     @Override
     public OptionalResult<T, E> consumeError(Consumer<E> consumer) {
+        consumer.accept(err);
         return this;
-    }
-
-    @Override
-    public Optional<T> optionalValue() {
-        return Optional.of(value);
     }
 }

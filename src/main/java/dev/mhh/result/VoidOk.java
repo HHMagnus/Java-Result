@@ -1,53 +1,47 @@
-package dev.mhh.results;
+package dev.mhh.result;
 
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public record VoidErr<E>(E err) implements VoidResult<E> {
-    public VoidErr {
-        Objects.requireNonNull(err);
+public record VoidOk<E>() implements VoidResult<E> {
+    @Override
+    public String toString() {
+        return "Ok";
     }
 
     @Override
     public Optional<E> error() {
-        return Optional.ofNullable(err);
-    }
-
-    @Override
-    public String toString() {
-        return "Err[" + err + ']';
+        return Optional.empty();
     }
 
     @Override
     public boolean isOk() {
-        return false;
+        return true;
     }
 
     @Override
     public VoidResult<E> runIfOk(Runnable runnable) {
-        return this;
-    }
-
-    @Override
-    public VoidResult<E> runIfError(Runnable runnable) {
         runnable.run();
         return this;
     }
 
     @Override
+    public VoidResult<E> runIfError(Runnable runnable) {
+        return this;
+    }
+
+    @Override
     public VoidResult<E> consumeError(Consumer<E> consumer) {
-        consumer.accept(err);
         return this;
     }
 
     @Override
     public boolean isError() {
-        return true;
+        return false;
     }
 
     @Override
-    public <R> Result<R, E> toResult(R value) {
-        return Result.err(err);
+    public <T> Result<T, E> toResult(T value) {
+        return Result.ok(value);
     }
 }

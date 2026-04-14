@@ -1,3 +1,3 @@
-module dev.mhh.results {
-    exports dev.mhh.results;
+module dev.mhh.result {
+    exports dev.mhh.result;
 }
