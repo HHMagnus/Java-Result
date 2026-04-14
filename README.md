@@ -11,4 +11,3 @@ TODO:
 - java docs
 - OptionalResult toResult
 - OptionalResult toVoidResult
-- VoidResult toOptionalResult

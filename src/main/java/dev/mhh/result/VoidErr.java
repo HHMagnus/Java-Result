@@ -50,4 +50,14 @@ public record VoidErr<E>(E err) implements VoidResult<E> {
     public <R> Result<R, E> toResult(R value) {
         return Result.err(err);
     }
+
+    @Override
+    public <R> OptionalResult<R, E> toOptionalResult(R optionalValue) {
+        return OptionalResult.err(err);
+    }
+
+    @Override
+    public <R> OptionalResult<R, E> toOptionalResult() {
+        return OptionalResult.err(err);
+    }
 }

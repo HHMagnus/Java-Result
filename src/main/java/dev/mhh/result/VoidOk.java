@@ -44,4 +44,14 @@ public record VoidOk<E>() implements VoidResult<E> {
     public <T> Result<T, E> toResult(T value) {
         return Result.ok(value);
     }
+
+    @Override
+    public <R> OptionalResult<R, E> toOptionalResult(R optionalValue) {
+        return OptionalResult.ok(optionalValue);
+    }
+
+    @Override
+    public <R> OptionalResult<R, E> toOptionalResult() {
+        return OptionalResult.empty();
+    }
 }

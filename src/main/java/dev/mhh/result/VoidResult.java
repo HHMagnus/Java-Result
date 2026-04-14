@@ -12,4 +12,6 @@ public sealed interface VoidResult<E>
     }
 
     <R> Result<R, E> toResult(R value);
+    <R> OptionalResult<R, E> toOptionalResult(R optionalValue);
+    <R> OptionalResult<R, E> toOptionalResult();
 }

@@ -152,4 +152,40 @@ class VoidResultTest {
 
         assertTrue(consumed.get());
     }
+
+    @Test
+    void toOptionalResultValueWhenOk() {
+        final var optionalResult = ok.toOptionalResult(10L);
+
+        assertUnchangedOk(ok);
+        assertTrue(optionalResult.isOk());
+        assertEquals(Optional.of(10L), optionalResult.optionalValue());
+    }
+
+    @Test
+    void toOptionalResultValueWhenErr() {
+        final var optionalResult = error10.toOptionalResult(250L);
+
+        assertUnchangedErr(error10);
+        assertTrue(optionalResult.isError());
+        assertEquals(Optional.of(10L), optionalResult.error());
+    }
+
+    @Test
+    void toOptionalResultEmptyWhenOk() {
+        final var optionalResult = ok.toOptionalResult();
+
+        assertUnchangedOk(ok);
+        assertTrue(optionalResult.isOk());
+        assertEquals(Optional.empty(), optionalResult.optionalValue());
+    }
+
+    @Test
+    void toOptionalResultEmptyWhenErr() {
+        final var optionalResult = error10.toOptionalResult();
+
+        assertUnchangedErr(error10);
+        assertTrue(optionalResult.isError());
+        assertEquals(Optional.of(10L), optionalResult.error());
+    }
 }
