@@ -5,7 +5,12 @@ TODO:
 - verify - error given and result given
 - combine
 - flatCombine
-- OptionalResult
-- OptionalResult all methods + value
+- OptionalResult existing for optional
+- OptionalResult existing for value present
 - List of results to result of list
-- BooleanResult ???
+- java docs
+- rename results -> result
+- OptionalResult toResult
+- OptionalResult toVoidResult
+- VoidResult toResult ??? instead of replace
+- VoidResult toVoidResult ??
