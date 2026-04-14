@@ -3,6 +3,7 @@ package dev.mhh.result;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public record OptErr<T, E>(E err) implements OptionalResult<T, E>{
@@ -13,6 +14,12 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>{
     @Override
     public Optional<T> optionalValue() {
         return Optional.empty();
+    }
+
+    @Override
+    public <N> OptionalResult<T, N> mapError(Function<E, N> function) {
+        final var error = function.apply(err);
+        return OptionalResult.err(error);
     }
 
     @Override

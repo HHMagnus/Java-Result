@@ -16,6 +16,12 @@ public record Err<T, E>(E err) implements Result<T, E> {
     }
 
     @Override
+    public <N> Result<T, N> mapError(Function<E, N> function) {
+        final var error = function.apply(err);
+        return Result.err(error);
+    }
+
+    @Override
     public Optional<E> error() {
         return Optional.ofNullable(err);
     }

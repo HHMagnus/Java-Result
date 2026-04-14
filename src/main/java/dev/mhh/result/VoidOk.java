@@ -2,6 +2,7 @@ package dev.mhh.result;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public record VoidOk<E>() implements VoidResult<E> {
     @Override
@@ -38,6 +39,11 @@ public record VoidOk<E>() implements VoidResult<E> {
     @Override
     public boolean isError() {
         return false;
+    }
+
+    @Override
+    public <N> VoidResult<N> mapError(Function<E, N> function) {
+        return VoidResult.ok();
     }
 
     @Override

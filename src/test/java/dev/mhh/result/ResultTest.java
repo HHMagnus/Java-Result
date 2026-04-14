@@ -312,4 +312,24 @@ class ResultTest {
         assertEquals(Optional.of(10L), optionalResult.error());
         assertUnchangedErr(error10);
     }
+
+    @Test
+    void mapErrorWhenOk() {
+        final var mappedResult = ok10.mapError(e -> e + 1);
+
+        assertUnchangedOk(mappedResult);
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void mapErrorWhenErr() {
+        final var mappedResult = error10.mapError(e -> e + 1);
+
+        assertTrue(mappedResult.isError());
+        assertFalse(mappedResult.isOk());
+        assertEquals(Optional.of(11L), mappedResult.error());
+        assertEquals(Optional.empty(), mappedResult.value());
+
+        assertUnchangedErr(error10);
+    }
 }

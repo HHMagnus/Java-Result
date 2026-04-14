@@ -18,6 +18,8 @@ public sealed interface Result<T, E>
 
     Optional<T> value();
 
+    <N> Result<T, N> mapError(Function<E, N> function);
+
     <R> Result<R, E> map(Function<T, R> mapper);
     <R> Result<R, E> flatMap(Function<T, Result<R, E>> mapper);
     Result<T, E> consume(Consumer<T> consumer);

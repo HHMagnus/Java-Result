@@ -251,4 +251,31 @@ public class OptionalResultTest {
 
         assertFalse(called.get());
     }
+
+    @Test
+    void mapErrorWhenPresent() {
+        final var mappedResult = ok10.mapError(x -> x * 2);
+
+        assertUnchangedPresent(mappedResult);
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void mapErrorWhenEmpty() {
+        final var mappedResult = okEmpty.mapError(x -> x * 2);
+
+        assertUnchangedEmpty(mappedResult);
+        assertUnchangedEmpty(okEmpty);
+    }
+
+    @Test
+    void mapErrorWhenErr() {
+        final var mappedResult = error10.mapError(x -> x * 2);
+
+        assertTrue(mappedResult.isError());
+        assertFalse(mappedResult.isOk());
+        assertEquals(Optional.of(20L), mappedResult.error());
+
+        assertUnchangedErr(error10);
+    }
 }

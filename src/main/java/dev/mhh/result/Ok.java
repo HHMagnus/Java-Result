@@ -21,6 +21,11 @@ public record Ok<T, E>(T ok) implements Result<T, E> {
     }
 
     @Override
+    public <N> Result<T, N> mapError(Function<E, N> function) {
+        return Result.ok(ok);
+    }
+
+    @Override
     public Optional<E> error() {
         return Optional.empty();
     }

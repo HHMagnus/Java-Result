@@ -3,6 +3,7 @@ package dev.mhh.result;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public record VoidErr<E>(E err) implements VoidResult<E> {
     public VoidErr {
@@ -44,6 +45,12 @@ public record VoidErr<E>(E err) implements VoidResult<E> {
     @Override
     public boolean isError() {
         return true;
+    }
+
+    @Override
+    public <N> VoidResult<N> mapError(Function<E, N> function) {
+        final var error = function.apply(err);
+        return VoidResult.err(error);
     }
 
     @Override

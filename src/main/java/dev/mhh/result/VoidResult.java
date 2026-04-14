@@ -1,5 +1,7 @@
 package dev.mhh.result;
 
+import java.util.function.Function;
+
 public sealed interface VoidResult<E>
         extends Shared<E, VoidResult<E>>
         permits VoidErr, VoidOk {
@@ -10,6 +12,8 @@ public sealed interface VoidResult<E>
     static <E> VoidResult<E> err(E err) {
         return new VoidErr<>(err);
     }
+
+    <N> VoidResult<N> mapError(Function<E, N> function);
 
     <R> Result<R, E> toResult(R value);
     <R> OptionalResult<R, E> toOptionalResult(R optionalValue);
