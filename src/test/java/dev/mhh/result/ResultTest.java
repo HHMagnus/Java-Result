@@ -147,9 +147,9 @@ class ResultTest {
     }
 
     @Test
-    void flatConsumeWhenSuccess() {
+    void verifyWhenSuccess() {
         final var consumed = new AtomicBoolean(false);
-        final var not20 = ok10.flatConsume(x -> {
+        final var not20 = ok10.verify(x -> {
             consumed.set(true);
             return VoidResult.ok();
         });
@@ -161,9 +161,9 @@ class ResultTest {
     }
 
     @Test
-    void flatConsumeWhenError() {
+    void verifyWhenError() {
         final var consumed = new AtomicBoolean(false);
-        final var error20 = error10.flatConsume(x -> {
+        final var error20 = error10.verify(x -> {
             consumed.set(true);
             return VoidResult.ok();
         });
@@ -175,9 +175,9 @@ class ResultTest {
     }
 
     @Test
-    void flatConsumeErrWhenSuccess() {
+    void verifyErrWhenSuccess() {
         final var consumed = new AtomicBoolean(false);
-        final var err250 = ok10.flatConsume(x -> {
+        final var err250 = ok10.verify(x -> {
             consumed.set(true);
             return VoidResult.err(250L);
         });
@@ -192,9 +192,9 @@ class ResultTest {
     }
 
     @Test
-    void flatConsumeErrWhenError() {
+    void verifyErrWhenError() {
         final var consumed = new AtomicBoolean(false);
-        final var error10Still = error10.flatConsume(x -> {
+        final var error10Still = error10.verify(x -> {
             consumed.set(true);
             return VoidResult.err(250L);
         });

@@ -2,7 +2,6 @@ Result
 
 TODO:
 - flatConsumeError
-- verify - error given and result given
 - combine
 - flatCombine
 - OptionalResult existing for optional

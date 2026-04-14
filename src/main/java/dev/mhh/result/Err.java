@@ -75,7 +75,7 @@ public record Err<T, E>(E err) implements Result<T, E>, Serializable {
     }
 
     @Override
-    public Result<T, E> flatConsume(Function<T, VoidResult<E>> consumer) {
+    public Result<T, E> verify(Function<T, VoidResult<E>> consumer) {
         return this;
     }
 
