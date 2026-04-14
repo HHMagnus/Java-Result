@@ -49,4 +49,9 @@ public record Present<T, E>(T value) implements OptionalResult<T, E> {
     public Optional<T> optionalValue() {
         return Optional.of(value);
     }
+
+    @Override
+    public VoidResult<E> toVoidResult() {
+        return VoidResult.ok();
+    }
 }

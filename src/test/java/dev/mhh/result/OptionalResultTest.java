@@ -177,4 +177,28 @@ public class OptionalResultTest {
 
         assertTrue(consumed.get());
     }
+
+    @Test
+    void toVoidResultWhenPresent() {
+        final var voidResult = ok10.toVoidResult();
+
+        assertTrue(voidResult.isOk());
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void toVoidResultWhenEmpty() {
+        final var voidResult = okEmpty.toVoidResult();
+
+        assertTrue(voidResult.isOk());
+        assertUnchangedEmpty(okEmpty);
+    }
+
+   @Test
+   void toVoidResultWhenErr() {
+        final var voidResult = error10.toVoidResult();
+
+        assertTrue(voidResult.isError());
+        assertUnchangedErr(error10);
+   }
 }

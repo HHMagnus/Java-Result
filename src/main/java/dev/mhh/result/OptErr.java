@@ -15,6 +15,11 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>{
     }
 
     @Override
+    public VoidResult<E> toVoidResult() {
+        return VoidResult.err(err);
+    }
+
+    @Override
     public Optional<E> error() {
         return Optional.of(err);
     }

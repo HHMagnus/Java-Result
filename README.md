@@ -10,4 +10,3 @@ TODO:
 - List of results to result of list
 - java docs
 - OptionalResult toResult
-- OptionalResult toVoidResult

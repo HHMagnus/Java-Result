@@ -10,6 +10,11 @@ public record Empty<T, E>() implements OptionalResult<T, E> {
     }
 
     @Override
+    public VoidResult<E> toVoidResult() {
+        return VoidResult.ok();
+    }
+
+    @Override
     public String toString() {
         return "Empty";
     }

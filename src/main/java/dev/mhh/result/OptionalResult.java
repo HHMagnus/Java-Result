@@ -16,4 +16,6 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
     static <T, E> OptionalResult<T, E> err(E error) {
         return new OptErr<>(error);
     }
+
+    VoidResult<E> toVoidResult();
 }
