@@ -29,9 +29,11 @@ class ResultTest {
     void manualCreation() {
         final var ok = new Ok<Long, Long>(10L);
         assertUnchangedOk(ok);
+        assertEquals(10L, ok.ok());
 
         final var err = new Err<Long, Long>(10L);
         assertUnchangedErr(err);
+        assertEquals(10L, err.err());
 
         assertThrows(NullPointerException.class, () -> new Ok<>(null));
         assertThrows(NullPointerException.class, () -> new Err<>(null));

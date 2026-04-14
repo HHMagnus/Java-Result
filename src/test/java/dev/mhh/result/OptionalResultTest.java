@@ -37,12 +37,14 @@ public class OptionalResultTest {
     public void manualInitiation() {
         final var present = new Present<Long, Long>(10L);
         assertUnchangedPresent(present);
+        assertEquals(10L, present.value());
 
         final var empty = new Empty<Long, Long>();
         assertUnchangedEmpty(empty);
 
         final var err = new OptErr<Long, Long>(10L);
         assertUnchangedErr(err);
+        assertEquals(10L, err.err());
 
         assertThrows(NullPointerException.class, () -> new Present<>(null));
         assertThrows(NullPointerException.class, () -> new OptErr<>(null));

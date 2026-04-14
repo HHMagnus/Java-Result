@@ -32,6 +32,8 @@ class VoidResultTest {
 
         final var err = new VoidErr<>(10L);
         assertUnchangedErr(err);
+        assertEquals(10L, err.err());
+
         assertThrows(NullPointerException.class, () -> new VoidErr<>(null));
     }
 
