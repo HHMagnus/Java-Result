@@ -23,7 +23,7 @@ public sealed interface Result<T, E>
     <R> Result<R, E> map(Function<T, R> mapper);
     <R> Result<R, E> flatMap(Function<T, Result<R, E>> mapper);
     Result<T, E> consume(Consumer<T> consumer);
-    Result<T, E> verify(Function<T, VoidResult<E>> consumer);
+    Result<T, E> verify(Function<T, VoidResult<E>> verifier);
 
     VoidResult<E> toVoidResult();
     OptionalResult<T, E> toOptionalResult();

@@ -75,8 +75,8 @@ public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
     }
 
     @Override
-    public Result<T, E> verify(Function<T, VoidResult<E>> consumer) {
-        final var voidResult = consumer.apply(value);
+    public Result<T, E> verify(Function<T, VoidResult<E>> verifier) {
+        final var voidResult = verifier.apply(value);
         return voidResult.toResult(value);
     }
 
