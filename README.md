@@ -1,7 +1,6 @@
 Result
 
 TODO:
-- flatConsumeError
 - combine
 - flatCombine
 - OptionalResult existing for optional
