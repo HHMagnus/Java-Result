@@ -194,11 +194,59 @@ public class OptionalResultTest {
         assertUnchangedEmpty(okEmpty);
     }
 
-   @Test
-   void toVoidResultWhenErr() {
+    @Test
+    void toVoidResultWhenErr() {
         final var voidResult = error10.toVoidResult();
 
         assertTrue(voidResult.isError());
         assertUnchangedErr(error10);
-   }
+    }
+
+    @Test
+    void toResultWhenPresent() {
+        final var called = new AtomicBoolean(false);
+        final var result = ok10.toResult(() -> {
+            called.set(true);
+            return 250L;
+        });
+
+        assertTrue(result.isOk());
+        assertEquals(Optional.of(10L), result.value());
+        assertEquals(Optional.empty(), result.error());
+        assertUnchangedPresent(ok10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void toResultWhenEmpty() {
+        final var called = new AtomicBoolean(false);
+        final var result = okEmpty.toResult(() -> {
+            called.set(true);
+            return 250L;
+        });
+
+        assertTrue(result.isError());
+        assertEquals(Optional.empty(), result.value());
+        assertEquals(Optional.of(250L), result.error());
+        assertUnchangedEmpty(okEmpty);
+
+        assertTrue(called.get());
+    }
+
+    @Test
+    void toResultWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var result = error10.toResult(() -> {
+            called.set(true);
+            return 250L;
+        });
+
+        assertTrue(result.isError());
+        assertEquals(Optional.empty(), result.value());
+        assertEquals(Optional.of(10L), result.error());
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
 }

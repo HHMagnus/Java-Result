@@ -2,6 +2,7 @@ package dev.mhh.result;
 
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public record Empty<T, E>() implements OptionalResult<T, E> {
     @Override
@@ -12,6 +13,12 @@ public record Empty<T, E>() implements OptionalResult<T, E> {
     @Override
     public VoidResult<E> toVoidResult() {
         return VoidResult.ok();
+    }
+
+    @Override
+    public Result<T, E> toResult(Supplier<E> errorIfEmpty) {
+        final var error = errorIfEmpty.get();
+        return Result.err(error);
     }
 
     @Override

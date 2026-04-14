@@ -3,6 +3,7 @@ package dev.mhh.result;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public record Present<T, E>(T value) implements OptionalResult<T, E> {
     public Present {
@@ -53,5 +54,10 @@ public record Present<T, E>(T value) implements OptionalResult<T, E> {
     @Override
     public VoidResult<E> toVoidResult() {
         return VoidResult.ok();
+    }
+
+    @Override
+    public Result<T, E> toResult(Supplier<E> errorIfEmpty) {
+        return Result.ok(value);
     }
 }

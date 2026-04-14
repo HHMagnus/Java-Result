@@ -1,6 +1,7 @@
 package dev.mhh.result;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
     Optional<T> optionalValue();
@@ -18,4 +19,5 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
     }
 
     VoidResult<E> toVoidResult();
+    Result<T, E> toResult(Supplier<E> errorIfEmpty);
 }

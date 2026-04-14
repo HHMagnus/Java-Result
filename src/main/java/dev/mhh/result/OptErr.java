@@ -3,6 +3,7 @@ package dev.mhh.result;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public record OptErr<T, E>(E err) implements OptionalResult<T, E>{
     public OptErr {
@@ -17,6 +18,11 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>{
     @Override
     public VoidResult<E> toVoidResult() {
         return VoidResult.err(err);
+    }
+
+    @Override
+    public Result<T, E> toResult(Supplier<E> errorIfEmpty) {
+        return Result.err(err);
     }
 
     @Override

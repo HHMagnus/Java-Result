@@ -9,4 +9,3 @@ TODO:
 - OptionalResult existing for value present
 - List of results to result of list
 - java docs
-- OptionalResult toResult
