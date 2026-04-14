@@ -6,24 +6,24 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public record Ok<T, E>(T ok) implements Result<T, E>, Serializable {
+public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
     @Override
     public String toString() {
-        return "Ok[" + ok + ']';
+        return "Ok[" + value + ']';
     }
 
     public Ok {
-        Objects.requireNonNull(ok);
+        Objects.requireNonNull(value);
     }
 
     @Override
-    public Optional<T> value() {
-        return Optional.of(ok);
+    public Optional<T> optionalValue() {
+        return Optional.of(value);
     }
 
     @Override
     public <N> Result<T, N> mapError(Function<E, N> function) {
-        return Result.ok(ok);
+        return Result.ok(value);
     }
 
     @Override
@@ -59,25 +59,25 @@ public record Ok<T, E>(T ok) implements Result<T, E>, Serializable {
 
     @Override
     public <R> Result<R, E> map(Function<T, R> mapper) {
-        final var value = mapper.apply(ok);
-        return Result.ok(value);
+        final var mapped = mapper.apply(value);
+        return Result.ok(mapped);
     }
 
     @Override
     public <R> Result<R, E> flatMap(Function<T, Result<R, E>> mapper) {
-        return mapper.apply(ok);
+        return mapper.apply(value);
     }
 
     @Override
     public Result<T, E> consume(Consumer<T> consumer) {
-        consumer.accept(ok);
+        consumer.accept(value);
         return this;
     }
 
     @Override
     public Result<T, E> flatConsume(Function<T, VoidResult<E>> consumer) {
-        final var voidResult = consumer.apply(ok);
-        return voidResult.toResult(ok);
+        final var voidResult = consumer.apply(value);
+        return voidResult.toResult(value);
     }
 
     @Override
@@ -87,6 +87,6 @@ public record Ok<T, E>(T ok) implements Result<T, E>, Serializable {
 
     @Override
     public OptionalResult<T, E> toOptionalResult() {
-        return OptionalResult.ok(ok);
+        return OptionalResult.ok(value);
     }
 }

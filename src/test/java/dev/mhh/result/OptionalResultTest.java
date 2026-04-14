@@ -213,7 +213,7 @@ public class OptionalResultTest {
         });
 
         assertTrue(result.isOk());
-        assertEquals(Optional.of(10L), result.value());
+        assertEquals(Optional.of(10L), result.optionalValue());
         assertEquals(Optional.empty(), result.error());
         assertUnchangedPresent(ok10);
 
@@ -229,7 +229,7 @@ public class OptionalResultTest {
         });
 
         assertTrue(result.isError());
-        assertEquals(Optional.empty(), result.value());
+        assertEquals(Optional.empty(), result.optionalValue());
         assertEquals(Optional.of(250L), result.error());
         assertUnchangedEmpty(okEmpty);
 
@@ -245,7 +245,7 @@ public class OptionalResultTest {
         });
 
         assertTrue(result.isError());
-        assertEquals(Optional.empty(), result.value());
+        assertEquals(Optional.empty(), result.optionalValue());
         assertEquals(Optional.of(10L), result.error());
         assertUnchangedErr(error10);
 

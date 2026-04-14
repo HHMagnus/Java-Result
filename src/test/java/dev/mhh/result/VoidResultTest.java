@@ -71,7 +71,7 @@ class VoidResultTest {
         assertUnchangedOk(ok);
 
         assertTrue(replaced.isOk());
-        assertEquals(Optional.of(10L), replaced.value());
+        assertEquals(Optional.of(10L), replaced.optionalValue());
         assertEquals(Optional.empty(), replaced.error());
     }
 
@@ -82,7 +82,7 @@ class VoidResultTest {
        assertUnchangedErr(error10);
 
         assertTrue(replaced.isError());
-        assertEquals(Optional.empty(), replaced.value());
+        assertEquals(Optional.empty(), replaced.optionalValue());
         assertEquals(Optional.of(10L), replaced.error());
    }
 

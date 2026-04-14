@@ -14,7 +14,7 @@ class ResultTest {
     private void assertUnchangedOk(Result<Long, Long> ok10) {
         assertTrue(ok10.isOk());
         assertFalse(ok10.isError());
-        assertEquals(Optional.of(10L), ok10.value());
+        assertEquals(Optional.of(10L), ok10.optionalValue());
         assertEquals(Optional.empty(), ok10.error());
     }
 
@@ -22,14 +22,14 @@ class ResultTest {
         assertTrue(error10.isError());
         assertFalse(error10.isOk());
         assertEquals(Optional.of(10L), error10.error());
-        assertEquals(Optional.empty(), error10.value());
+        assertEquals(Optional.empty(), error10.optionalValue());
     }
 
     @Test
     void manualCreation() {
         final var ok = new Ok<Long, Long>(10L);
         assertUnchangedOk(ok);
-        assertEquals(10L, ok.ok());
+        assertEquals(10L, ok.value());
 
         final var err = new Err<Long, Long>(10L);
         assertUnchangedErr(err);
@@ -44,7 +44,7 @@ class ResultTest {
         final var success = Result.ok(10L);
 
         assertTrue(success.isOk());
-        assertEquals(Optional.of(10L), success.value());
+        assertEquals(Optional.of(10L), success.optionalValue());
         assertEquals(Optional.empty(), success.error());
     }
 
@@ -54,7 +54,7 @@ class ResultTest {
 
         assertTrue(error.isError());
         assertEquals(Optional.of(10L), error.error());
-        assertEquals(Optional.empty(), error.value());
+        assertEquals(Optional.empty(), error.optionalValue());
     }
 
     @Test
@@ -68,7 +68,7 @@ class ResultTest {
         final var ok20 = ok10.map(x -> x * 2);
 
         assertTrue(ok20.isOk());
-        assertEquals(Optional.of(20L), ok20.value());
+        assertEquals(Optional.of(20L), ok20.optionalValue());
         assertEquals(Optional.empty(), ok20.error());
 
         assertUnchangedOk(ok10);
@@ -80,7 +80,7 @@ class ResultTest {
 
         assertTrue(error20.isError());
         assertEquals(Optional.of(10L), error20.error());
-        assertEquals(Optional.empty(), error20.value());
+        assertEquals(Optional.empty(), error20.optionalValue());
 
         assertUnchangedErr(error10);
     }
@@ -90,7 +90,7 @@ class ResultTest {
         final var ok20 = ok10.flatMap(x -> Result.ok(x * 2));
 
         assertTrue(ok20.isOk());
-        assertEquals(Optional.of(20L), ok20.value());
+        assertEquals(Optional.of(20L), ok20.optionalValue());
         assertEquals(Optional.empty(), ok20.error());
 
         assertUnchangedOk(ok10);
@@ -110,7 +110,7 @@ class ResultTest {
         final var ok20 = ok10.flatMap(x -> Result.err(20L));
 
         assertTrue(ok20.isError());
-        assertEquals(Optional.empty(), ok20.value());
+        assertEquals(Optional.empty(), ok20.optionalValue());
         assertEquals(Optional.of(20L), ok20.error());
 
         assertUnchangedOk(ok10);
@@ -184,7 +184,7 @@ class ResultTest {
 
         assertTrue(err250.isError());
         assertEquals(Optional.of(250L), err250.error());
-        assertEquals(Optional.empty(), err250.value());
+        assertEquals(Optional.empty(), err250.optionalValue());
 
         assertUnchangedOk(ok10);
 
@@ -328,7 +328,7 @@ class ResultTest {
         assertTrue(mappedResult.isError());
         assertFalse(mappedResult.isOk());
         assertEquals(Optional.of(11L), mappedResult.error());
-        assertEquals(Optional.empty(), mappedResult.value());
+        assertEquals(Optional.empty(), mappedResult.optionalValue());
 
         assertUnchangedErr(error10);
     }

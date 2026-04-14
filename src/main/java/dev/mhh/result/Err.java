@@ -12,7 +12,7 @@ public record Err<T, E>(E err) implements Result<T, E>, Serializable {
     }
 
     @Override
-    public Optional<T> value() {
+    public Optional<T> optionalValue() {
         return Optional.empty();
     }
 

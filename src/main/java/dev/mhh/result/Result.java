@@ -16,7 +16,7 @@ public sealed interface Result<T, E>
         return new Err<>(value);
     }
 
-    Optional<T> value();
+    Optional<T> optionalValue();
 
     <N> Result<T, N> mapError(Function<E, N> function);
 

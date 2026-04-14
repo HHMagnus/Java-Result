@@ -10,4 +10,3 @@ TODO:
 - Flat map with optional result and such
 - List of results to result of list
 - java docs
-- Consider names of inner values vs. access with Optional calls
