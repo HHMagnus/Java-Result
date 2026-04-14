@@ -63,8 +63,8 @@ class VoidResultTest {
     }
 
     @Test
-    void replaceWhenOk() {
-        final var replaced = ok.replace(10L);
+    void toResultWhenOk() {
+        final var replaced = ok.toResult(10L);
 
         assertUnchangedOk(ok);
 
@@ -74,8 +74,8 @@ class VoidResultTest {
     }
 
    @Test
-   void replaceWhenErr() {
-        final var replaced = error10.replace(10L);
+   void toResultWhenErr() {
+        final var replaced = error10.toResult(10L);
 
        assertUnchangedErr(error10);
 

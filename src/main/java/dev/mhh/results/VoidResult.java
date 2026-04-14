@@ -11,5 +11,5 @@ public sealed interface VoidResult<E>
         return new VoidErr<>(err);
     }
 
-    <R> Result<R, E> replace(R value);
+    <R> Result<R, E> toResult(R value);
 }

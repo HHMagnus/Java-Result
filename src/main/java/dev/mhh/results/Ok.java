@@ -71,7 +71,7 @@ public record Ok<T, E>(T ok) implements Result<T, E> {
     @Override
     public Result<T, E> flatConsume(Function<T, VoidResult<E>> consumer) {
         final var voidResult = consumer.apply(ok);
-        return voidResult.replace(ok);
+        return voidResult.toResult(ok);
     }
 
     @Override

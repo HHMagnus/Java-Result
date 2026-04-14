@@ -41,7 +41,7 @@ public record VoidOk<E>() implements VoidResult<E> {
     }
 
     @Override
-    public <T> Result<T, E> replace(T value) {
+    public <T> Result<T, E> toResult(T value) {
         return Result.ok(value);
     }
 }

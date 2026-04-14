@@ -12,4 +12,4 @@ TODO:
 - rename results -> result
 - OptionalResult toResult
 - OptionalResult toVoidResult
-- VoidResult toResult ??? instead of replace
+- VoidResult toOptionalResult

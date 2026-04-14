@@ -47,7 +47,7 @@ public record VoidErr<E>(E err) implements VoidResult<E> {
     }
 
     @Override
-    public <R> Result<R, E> replace(R value) {
+    public <R> Result<R, E> toResult(R value) {
         return Result.err(err);
     }
 }
