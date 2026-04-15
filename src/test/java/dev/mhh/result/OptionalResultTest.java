@@ -391,7 +391,7 @@ public class OptionalResultTest {
 
     @Test
     void flatMapToEmptyWhenEmpty() {
-        final var mappedResult = okEmpty.flatMap(x -> Optional.empty().equals(x) ? OptionalResult.<Long, Long>empty() : OptionalResult.ok(250L));
+        final var mappedResult = okEmpty.flatMap(x -> Optional.empty().equals(x) ? OptionalResult.empty() : OptionalResult.ok(250L));
 
         assertUnchangedEmpty(mappedResult);
         assertUnchangedEmpty(okEmpty);
@@ -399,7 +399,7 @@ public class OptionalResultTest {
 
     @Test
     void flatMapToErrorWhenEmpty() {
-        final var mappedResult = okEmpty.flatMap(x -> Optional.empty().equals(x) ? OptionalResult.<Long, Long>err(10L) : OptionalResult.ok(250L));
+        final var mappedResult = okEmpty.flatMap(x -> Optional.empty().equals(x) ? OptionalResult.err(10L) : OptionalResult.ok(250L));
 
         assertUnchangedErr(mappedResult);
         assertUnchangedEmpty(okEmpty);
