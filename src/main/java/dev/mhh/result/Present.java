@@ -107,4 +107,9 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
         final var optional = mapper.apply(value);
         return OptionalResult.okOptional(optional);
     }
+
+    @Override
+    public <R> OptionalResult<R, E> flatMapValue(final Function<T, OptionalResult<R, E>> mapper) {
+        return mapper.apply(value);
+    }
 }

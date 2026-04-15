@@ -68,6 +68,11 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     }
 
     @Override
+    public <R> OptionalResult<R, E> flatMapValue(final Function<T, OptionalResult<R, E>> mapper) {
+        return OptionalResult.empty();
+    }
+
+    @Override
     public String toString() {
         return "Empty";
     }

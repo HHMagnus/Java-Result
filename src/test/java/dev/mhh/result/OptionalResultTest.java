@@ -688,4 +688,62 @@ public class OptionalResultTest {
 
         assertFalse(called.get());
     }
+
+    @Test
+    void flatMapValuePresentWhenPresent() {
+        final var mapped = ok10.flatMapValue(x -> OptionalResult.ok(x * 2));
+
+        assertTrue(mapped.isOk());
+        assertEquals(Optional.of(20L), mapped.optionalValue());
+        assertEquals(Optional.empty(), mapped.error());
+
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void flatMapValueEmptyWhenPresent() {
+        final var mapped = ok10.flatMapValue(x -> x == 10 ? OptionalResult.empty() : OptionalResult.ok(250L));
+
+        assertTrue(mapped.isOk());
+        assertEquals(Optional.empty(), mapped.optionalValue());
+        assertEquals(Optional.empty(), mapped.error());
+
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void flatMapValueErrWhenPresent() {
+        final var mapped = ok10.flatMapValue(x -> x == 10 ? OptionalResult.err(10L) : OptionalResult.ok(250L));
+
+        assertUnchangedErr(mapped);
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void flatMapValueWhenEmpty() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = okEmpty.flatMapValue(x -> {
+            called.set(true);
+            return OptionalResult.ok(x);
+        });
+
+        assertUnchangedEmpty(mapped);
+        assertUnchangedEmpty(okEmpty);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void flatMapValueWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = error10.flatMapValue(x -> {
+            called.set(true);
+            return OptionalResult.ok(x);
+        });
+
+        assertUnchangedErr(mapped);
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
 }
