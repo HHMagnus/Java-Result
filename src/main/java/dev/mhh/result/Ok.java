@@ -95,4 +95,9 @@ public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
         final var optional = mapper.apply(value);
         return OptionalResult.okOptional(optional);
     }
+
+    @Override
+    public <R> OptionalResult<R, E> flatMapWithOptionalResult(final Function<T, OptionalResult<R, E>> mapper) {
+        return mapper.apply(value);
+    }
 }

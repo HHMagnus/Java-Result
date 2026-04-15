@@ -93,4 +93,9 @@ public record Err<T, E>(E err) implements Result<T, E>, Serializable {
     public <R> OptionalResult<R, E> mapToOptional(final Function<T, Optional<R>> mapper) {
         return OptionalResult.err(err);
     }
+
+    @Override
+    public <R> OptionalResult<R, E> flatMapWithOptionalResult(final Function<T, OptionalResult<R, E>> mapper) {
+        return OptionalResult.err(err);
+    }
 }

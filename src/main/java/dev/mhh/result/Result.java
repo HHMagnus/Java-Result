@@ -29,4 +29,5 @@ public sealed interface Result<T, E>
     OptionalResult<T, E> toOptionalResult();
 
     <R> OptionalResult<R, E> mapToOptional(Function<T, Optional<R>> mapper);
+    <R> OptionalResult<R, E> flatMapWithOptionalResult(Function<T, OptionalResult<R, E>> mapper);
 }
