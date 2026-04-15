@@ -746,4 +746,37 @@ public class OptionalResultTest {
 
         assertFalse(called.get());
     }
+
+    @Test
+    void consumeValueWhenPresent() {
+        final var consumed = new AtomicBoolean(false);
+        final var consumedResult = ok10.consumeValue(x -> consumed.set(10L == x));
+
+        assertUnchangedPresent(consumedResult);
+        assertUnchangedPresent(ok10);
+
+        assertTrue(consumed.get());
+    }
+
+    @Test
+    void consumeValueWhenEmpty() {
+        final var consumed = new AtomicBoolean(false);
+        final var consumedResult = okEmpty.consumeValue(_ -> consumed.set(false));
+
+        assertUnchangedEmpty(consumedResult);
+        assertUnchangedEmpty(okEmpty);
+
+        assertFalse(consumed.get());
+    }
+
+    @Test
+    void consumeValueWhenErr() {
+        final var consumed = new AtomicBoolean(false);
+        final var consumedResult = error10.consumeValue(_ -> consumed.set(false));
+
+        assertUnchangedErr(consumedResult);
+        assertUnchangedErr(error10);
+
+        assertFalse(consumed.get());
+    }
 }

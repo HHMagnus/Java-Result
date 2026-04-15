@@ -112,4 +112,10 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
     public <R> OptionalResult<R, E> flatMapValue(final Function<T, OptionalResult<R, E>> mapper) {
         return mapper.apply(value);
     }
+
+    @Override
+    public OptionalResult<T, E> consumeValue(final Consumer<T> consumer) {
+        consumer.accept(value);
+        return this;
+    }
 }

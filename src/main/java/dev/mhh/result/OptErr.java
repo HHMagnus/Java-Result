@@ -74,6 +74,11 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
     }
 
     @Override
+    public OptionalResult<T, E> consumeValue(final Consumer<T> consumer) {
+        return this;
+    }
+
+    @Override
     public Optional<E> error() {
         return Optional.of(err);
     }
