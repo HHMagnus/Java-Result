@@ -8,7 +8,6 @@ TODO:
 
 OptionalResult
 ```java
-<R> Result<R, E> flatMapValueToResult(Function<T, Result<R, E>> mapper);
 OptionalResult<T, E> consumeValue(Consumer<T> consumer);
 OptionalResult<T, E> verifyValue(Function<T, VoidResult<E>> verifier);
 ```
