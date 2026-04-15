@@ -332,4 +332,47 @@ class ResultTest {
 
         assertUnchangedErr(error10);
     }
+
+    @Test
+    void mapToOptionalEmptyWhenOk() {
+        final var mappedResult = ok10.mapToOptional(x -> Optional.empty());
+
+        assertTrue(mappedResult.isOk());
+        assertEquals(Optional.empty(), mappedResult.optionalValue());
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void mapToOptionalEmptyWhenErr() {
+        final var mappedResult = error10.mapToOptional(x -> Optional.empty());
+
+        assertTrue(mappedResult.isError());
+        assertFalse(mappedResult.isOk());
+        assertEquals(Optional.of(10L), mappedResult.error());
+        assertEquals(Optional.empty(), mappedResult.optionalValue());
+
+        assertUnchangedErr(error10);
+    }
+
+    @Test
+    void mapToOptionalPresentWhenOk() {
+        final var mappedResult = ok10.mapToOptional(x -> Optional.of(x * 2));
+
+        assertTrue(mappedResult.isOk());
+        assertEquals(Optional.of(20L), mappedResult.optionalValue());
+        assertEquals(Optional.empty(), mappedResult.error());
+
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void mapToOptionalPresentWhenErr() {
+        final var mappedResult = error10.mapToOptional(x -> Optional.of(x * 2));
+
+        assertTrue(mappedResult.isError());
+        assertEquals(Optional.of(10L), mappedResult.error());
+        assertEquals(Optional.empty(), mappedResult.optionalValue());
+
+        assertUnchangedErr(error10);
+    }
 }

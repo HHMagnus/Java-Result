@@ -20,7 +20,4 @@ OptionalResult<T, E> consumeValue(Consumer<T> consumer);
 OptionalResult<T, E> verifyValue(Function<T, VoidResult<E>> verifier);
 ```
 
-Result
-```java
-<R> OptionalResult<R, E> flatMapWithOptionalResult(Function<T, OptionalResult<R, E>> mapper);
-```
+    <R> OptionalResult<R, E> flatMapWithOptionalResult(Function<T, OptionalResult<R, E>> mapper);

@@ -27,4 +27,6 @@ public sealed interface Result<T, E>
 
     VoidResult<E> toVoidResult();
     OptionalResult<T, E> toOptionalResult();
+
+    <R> OptionalResult<R, E> mapToOptional(Function<T, Optional<R>> mapper);
 }
