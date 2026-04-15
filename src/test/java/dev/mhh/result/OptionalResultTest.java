@@ -69,6 +69,18 @@ public class OptionalResultTest {
     }
 
     @Test
+    void okOptionalWhenPresent() {
+        final var ok10 = OptionalResult.<Long, Long>okOptional(Optional.of(10L));
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void okOptionalWhenEmpty() {
+        final var okEmpty = OptionalResult.<Long, Long>okOptional(Optional.empty());
+        assertUnchangedEmpty(okEmpty);
+    }
+
+    @Test
     void toStringTest() {
         assertEquals("Present[10]", ok10.toString());
         assertEquals("Empty", okEmpty.toString());
@@ -319,6 +331,90 @@ public class OptionalResultTest {
         final var mappedResult = error10.map(x -> {
             called.set(true);
             return x.map(y -> y * 2);
+        });
+
+        assertUnchangedErr(mappedResult);
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void flatMapToPresentWhenPresent() {
+        final var mappedResult = ok10.flatMap(x -> OptionalResult.ok(20L));
+
+        assertTrue(mappedResult.isOk());
+        assertEquals(Optional.of(20L), mappedResult.optionalValue());
+        assertEquals(Optional.empty(), mappedResult.error());
+
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void flatMapToEmptyWhenPresent() {
+        final var mappedResult = ok10.flatMap(x -> OptionalResult.<Long, Long>empty());
+
+        assertUnchangedEmpty(mappedResult);
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void flatMapToErrorWhenPresent() {
+        final var mappedResult = ok10.flatMap(x -> OptionalResult.<Long, Long>err(10L));
+
+        assertUnchangedErr(mappedResult);
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void flatMapToPresentWhenEmpty() {
+        final var mappedResult = okEmpty.flatMap(x -> OptionalResult.ok(20L));
+
+        assertTrue(mappedResult.isOk());
+        assertEquals(Optional.of(20L), mappedResult.optionalValue());
+        assertEquals(Optional.empty(), mappedResult.error());
+
+        assertUnchangedEmpty(okEmpty);
+    }
+
+    @Test
+    void flatMapToEmptyWhenEmpty() {
+        final var mappedResult = okEmpty.flatMap(x -> OptionalResult.<Long, Long>empty());
+
+        assertUnchangedEmpty(mappedResult);
+        assertUnchangedEmpty(okEmpty);
+    }
+
+    @Test
+    void flatMapToErrorWhenEmpty() {
+        final var mappedResult = okEmpty.flatMap(x -> OptionalResult.<Long, Long>err(10L));
+
+        assertUnchangedErr(mappedResult);
+        assertUnchangedEmpty(okEmpty);
+    }
+
+    @Test
+    void flatMapToPresentWhenErr() {
+        final var mappedResult = error10.flatMap(x -> OptionalResult.ok(20L));
+
+        assertUnchangedErr(mappedResult);
+        assertUnchangedErr(error10);
+    }
+
+    @Test
+    void flatMapToEmptyWhenErr() {
+        final var mappedResult = error10.flatMap(x -> OptionalResult.<Long, Long>empty());
+
+        assertUnchangedErr(mappedResult);
+        assertUnchangedErr(error10);
+    }
+
+    @Test
+    void flatMapToErrorWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var mappedResult = error10.flatMap(x -> {
+            called.set(true);
+            return OptionalResult.<Long, Long>err(250L);
         });
 
         assertUnchangedErr(mappedResult);
