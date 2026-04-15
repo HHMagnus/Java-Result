@@ -302,7 +302,7 @@ public class OptionalResultTest {
 
     @Test
     void mapToPresentWhenEmpty() {
-        final var mappedResult = okEmpty.map(x -> Optional.of(10L));
+        final var mappedResult = okEmpty.map(x -> Optional.of(x.map(_ -> 250L).orElse(10L)));
 
         assertUnchangedPresent(mappedResult);
         assertUnchangedEmpty(okEmpty);
@@ -310,7 +310,7 @@ public class OptionalResultTest {
 
     @Test
     void mapToEmptyWhenPresent() {
-        final var mappedResult = ok10.map(x -> Optional.empty());
+        final var mappedResult = ok10.map(x -> Optional.of(10L).equals(x) ? Optional.empty() : Optional.of(250L));
 
         assertTrue(mappedResult.isOk());
         assertEquals(Optional.empty(), mappedResult.optionalValue());
@@ -341,7 +341,7 @@ public class OptionalResultTest {
 
     @Test
     void flatMapToPresentWhenPresent() {
-        final var mappedResult = ok10.flatMap(x -> OptionalResult.ok(20L));
+        final var mappedResult = ok10.flatMap(x -> OptionalResult.okOptional(x.map(y -> y * 2)));
 
         assertTrue(mappedResult.isOk());
         assertEquals(Optional.of(20L), mappedResult.optionalValue());
@@ -352,7 +352,7 @@ public class OptionalResultTest {
 
     @Test
     void flatMapToEmptyWhenPresent() {
-        final var mappedResult = ok10.flatMap(x -> OptionalResult.<Long, Long>empty());
+        final var mappedResult = ok10.flatMap(x -> Optional.of(10L).equals(x) ? OptionalResult.empty() : OptionalResult.ok(250L));
 
         assertUnchangedEmpty(mappedResult);
         assertUnchangedPresent(ok10);
@@ -360,7 +360,7 @@ public class OptionalResultTest {
 
     @Test
     void flatMapToErrorWhenPresent() {
-        final var mappedResult = ok10.flatMap(x -> OptionalResult.<Long, Long>err(10L));
+        final var mappedResult = ok10.flatMap(x -> OptionalResult.<Long, Long>err(x.orElse(250L)));
 
         assertUnchangedErr(mappedResult);
         assertUnchangedPresent(ok10);
@@ -368,7 +368,7 @@ public class OptionalResultTest {
 
     @Test
     void flatMapToPresentWhenEmpty() {
-        final var mappedResult = okEmpty.flatMap(x -> OptionalResult.ok(20L));
+        final var mappedResult = okEmpty.flatMap(x -> OptionalResult.ok(x.orElse(20L)));
 
         assertTrue(mappedResult.isOk());
         assertEquals(Optional.of(20L), mappedResult.optionalValue());
@@ -379,7 +379,7 @@ public class OptionalResultTest {
 
     @Test
     void flatMapToEmptyWhenEmpty() {
-        final var mappedResult = okEmpty.flatMap(x -> OptionalResult.<Long, Long>empty());
+        final var mappedResult = okEmpty.flatMap(x -> Optional.empty().equals(x) ? OptionalResult.<Long, Long>empty() : OptionalResult.ok(250L));
 
         assertUnchangedEmpty(mappedResult);
         assertUnchangedEmpty(okEmpty);
@@ -387,7 +387,7 @@ public class OptionalResultTest {
 
     @Test
     void flatMapToErrorWhenEmpty() {
-        final var mappedResult = okEmpty.flatMap(x -> OptionalResult.<Long, Long>err(10L));
+        final var mappedResult = okEmpty.flatMap(x -> Optional.empty().equals(x) ? OptionalResult.<Long, Long>err(10L) : OptionalResult.ok(250L));
 
         assertUnchangedErr(mappedResult);
         assertUnchangedEmpty(okEmpty);
@@ -395,18 +395,30 @@ public class OptionalResultTest {
 
     @Test
     void flatMapToPresentWhenErr() {
-        final var mappedResult = error10.flatMap(x -> OptionalResult.ok(20L));
+        final var called = new AtomicBoolean(false);
+        final var mappedResult = error10.flatMap(x -> {
+            called.set(true);
+            return OptionalResult.ok(x.orElse(250L) * 2);
+        });
 
         assertUnchangedErr(mappedResult);
         assertUnchangedErr(error10);
+
+        assertFalse(called.get());
     }
 
     @Test
     void flatMapToEmptyWhenErr() {
-        final var mappedResult = error10.flatMap(x -> OptionalResult.<Long, Long>empty());
+        final var called = new AtomicBoolean(false);
+        final var mappedResult = error10.flatMap(x -> {
+            called.set(true);
+            return OptionalResult.<Long, Long>empty();
+        });
 
         assertUnchangedErr(mappedResult);
         assertUnchangedErr(error10);
+
+        assertFalse(called.get());
     }
 
     @Test
@@ -414,7 +426,7 @@ public class OptionalResultTest {
         final var called = new AtomicBoolean(false);
         final var mappedResult = error10.flatMap(x -> {
             called.set(true);
-            return OptionalResult.<Long, Long>err(250L);
+            return OptionalResult.<Long, Long>err(x.orElse(250L));
         });
 
         assertUnchangedErr(mappedResult);
@@ -450,7 +462,7 @@ public class OptionalResultTest {
         final var called = new AtomicBoolean(false);
         final var result = error10.flatMapWithResult(x -> {
             called.set(true);
-            return Result.ok(250L);
+            return Result.ok(x.orElse(250L));
         });
 
         assertTrue(result.isError());
@@ -509,7 +521,7 @@ public class OptionalResultTest {
     @Test
     void consumeWhenErr() {
         final var called = new AtomicBoolean(false);
-        final var consumedResult = error10.consume(x -> called.set(true));
+        final var consumedResult = error10.consume(_ -> called.set(true));
 
         assertUnchangedErr(consumedResult);
         assertUnchangedErr(error10);
@@ -565,7 +577,7 @@ public class OptionalResultTest {
     void verifyWhenErr() {
         final var called = new AtomicBoolean(false);
 
-        final var mapped = error10.verify(x -> {
+        final var mapped = error10.verify(_ -> {
             called.set(true);
             return VoidResult.ok();
         });
