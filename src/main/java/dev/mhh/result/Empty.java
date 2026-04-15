@@ -46,6 +46,12 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     }
 
     @Override
+    public OptionalResult<T, E> consume(final Consumer<Optional<T>> consumer) {
+        consumer.accept(Optional.empty());
+        return this;
+    }
+
+    @Override
     public String toString() {
         return "Empty";
     }
