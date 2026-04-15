@@ -779,4 +779,60 @@ public class OptionalResultTest {
 
         assertFalse(consumed.get());
     }
+
+    @Test
+    void verifyValueOkWhenPresent() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = ok10.verifyValue(x -> {
+            called.set(10L == x);
+            return VoidResult.ok();
+        });
+
+        assertUnchangedPresent(mapped);
+        assertUnchangedPresent(ok10);
+
+        assertTrue(called.get());
+    }
+
+    @Test
+    void verifyValueErrWhenPresent() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = ok10.verifyValue(x -> {
+            called.set(10L == x);
+            return VoidResult.err(10L);
+        });
+
+        assertUnchangedErr(mapped);
+        assertUnchangedPresent(ok10);
+
+        assertTrue(called.get());
+    }
+
+    @Test
+    void verifyValueWhenEmpty() {
+        final var called = new AtomicBoolean(false);
+        final var consumedResult = okEmpty.verifyValue(x -> {
+            called.set(true);
+            return VoidResult.err(x);
+        });
+
+        assertUnchangedEmpty(consumedResult);
+        assertUnchangedEmpty(okEmpty);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void verifyValueWhenErr() {
+        final var consumed = new AtomicBoolean(false);
+        final var consumedResult = error10.verifyValue(x -> {
+            consumed.set(false);
+            return VoidResult.ok();
+        });
+
+        assertUnchangedErr(consumedResult);
+        assertUnchangedErr(error10);
+
+        assertFalse(consumed.get());
+    }
 }

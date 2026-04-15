@@ -118,4 +118,10 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
         consumer.accept(value);
         return this;
     }
+
+    @Override
+    public OptionalResult<T, E> verifyValue(final Function<T, VoidResult<E>> verifier) {
+        final var voidResult = verifier.apply(value);
+        return voidResult.toOptionalResult(value);
+    }
 }
