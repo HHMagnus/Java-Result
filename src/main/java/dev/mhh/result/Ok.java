@@ -60,23 +60,27 @@ public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
 
     @Override
     public <R> Result<R, E> map(Function<T, R> mapper) {
+        Objects.requireNonNull(mapper);
         final var mapped = mapper.apply(value);
         return Result.ok(mapped);
     }
 
     @Override
     public <R> Result<R, E> flatMap(Function<T, Result<R, E>> mapper) {
+        Objects.requireNonNull(mapper);
         return mapper.apply(value);
     }
 
     @Override
     public Result<T, E> consume(Consumer<T> consumer) {
+        Objects.requireNonNull(consumer);
         consumer.accept(value);
         return this;
     }
 
     @Override
     public Result<T, E> verify(Function<T, VoidResult<E>> verifier) {
+        Objects.requireNonNull(verifier);
         final var voidResult = verifier.apply(value);
         return voidResult.toResult(value);
     }
@@ -93,12 +97,14 @@ public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
 
     @Override
     public <R> OptionalResult<R, E> mapToOptional(final Function<T, Optional<R>> mapper) {
+        Objects.requireNonNull(mapper);
         final var optional = mapper.apply(value);
         return OptionalResult.okOptional(optional);
     }
 
     @Override
     public <R> OptionalResult<R, E> flatMapWithOptionalResult(final Function<T, OptionalResult<R, E>> mapper) {
+        Objects.requireNonNull(mapper);
         return mapper.apply(value);
     }
 }

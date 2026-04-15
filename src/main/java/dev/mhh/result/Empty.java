@@ -25,12 +25,14 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
 
     @Override
     public Result<T, E> toResult(Supplier<E> errorIfEmpty) {
+        Objects.requireNonNull(errorIfEmpty);
         final var error = errorIfEmpty.get();
         return Result.err(error);
     }
 
     @Override
     public <R> OptionalResult<R, E> map(Function<Optional<T>, Optional<R>> mapper) {
+        Objects.requireNonNull(mapper);
         final var optional = mapper.apply(Optional.empty());
         return optional.map(OptionalResult::<R, E>ok)
                 .orElse(OptionalResult.empty());
@@ -38,22 +40,26 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
 
     @Override
     public <R> OptionalResult<R, E> flatMap(Function<Optional<T>, OptionalResult<R, E>> mapper) {
+        Objects.requireNonNull(mapper);
         return mapper.apply(Optional.empty());
     }
 
     @Override
     public <R> Result<R, E> flatMapWithResult(final Function<Optional<T>, Result<R, E>> mapper) {
+        Objects.requireNonNull(mapper);
         return mapper.apply(Optional.empty());
     }
 
     @Override
     public OptionalResult<T, E> consume(final Consumer<Optional<T>> consumer) {
+        Objects.requireNonNull(consumer);
         consumer.accept(Optional.empty());
         return this;
     }
 
     @Override
     public OptionalResult<T, E> verify(final Function<Optional<T>, VoidResult<E>> verifier) {
+        Objects.requireNonNull(verifier);
         final var voidResult = verifier.apply(Optional.empty());
         return voidResult.toOptionalResult();
     }

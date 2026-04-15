@@ -72,6 +72,7 @@ public record VoidOk<E>() implements VoidResult<E>, Serializable {
 
     @Override
     public VoidResult<E> verify(Supplier<VoidResult<E>> consumer) {
+        Objects.requireNonNull(consumer);
         return consumer.get();
     }
 }

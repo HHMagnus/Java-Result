@@ -19,6 +19,7 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
 
     @Override
     public <N> OptionalResult<T, N> mapError(Function<E, N> function) {
+        Objects.requireNonNull(function);
         final var error = function.apply(err);
         return OptionalResult.err(error);
     }

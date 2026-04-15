@@ -71,57 +71,67 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
 
     @Override
     public <R> OptionalResult<R, E> map(Function<Optional<T>, Optional<R>> mapper) {
+        Objects.requireNonNull(mapper);
         final var optional = mapper.apply(Optional.of(value));
         return OptionalResult.okOptional(optional);
     }
 
     @Override
     public <R> OptionalResult<R, E> flatMap(Function<Optional<T>, OptionalResult<R, E>> mapper) {
+        Objects.requireNonNull(mapper);
         return mapper.apply(Optional.of(value));
     }
 
     @Override
     public <R> Result<R, E> flatMapWithResult(final Function<Optional<T>, Result<R, E>> mapper) {
+        Objects.requireNonNull(mapper);
         return mapper.apply(Optional.of(value));
     }
 
     @Override
     public OptionalResult<T, E> consume(final Consumer<Optional<T>> consumer) {
+        Objects.requireNonNull(consumer);
         consumer.accept(Optional.of(value));
         return this;
     }
 
     @Override
     public OptionalResult<T, E> verify(final Function<Optional<T>, VoidResult<E>> verifier) {
+        Objects.requireNonNull(verifier);
         final var voidResult = verifier.apply(Optional.of(value));
         return voidResult.toOptionalResult(value);
     }
 
     @Override
     public <R> OptionalResult<R, E> mapValue(final Function<T, R> mapper) {
+        Objects.requireNonNull(mapper);
         final var mappedValue = mapper.apply(value);
         return OptionalResult.ok(mappedValue);
     }
 
     @Override
     public <R> OptionalResult<R, E> mapValueToOptional(final Function<T, Optional<R>> mapper) {
+        Objects.requireNonNull(mapper);
         final var optional = mapper.apply(value);
         return OptionalResult.okOptional(optional);
     }
 
     @Override
     public <R> OptionalResult<R, E> flatMapValue(final Function<T, OptionalResult<R, E>> mapper) {
+        Objects.requireNonNull(mapper);
         return mapper.apply(value);
     }
 
     @Override
     public OptionalResult<T, E> consumeValue(final Consumer<T> consumer) {
+        Objects.requireNonNull(consumer);
         consumer.accept(value);
         return this;
     }
 
     @Override
     public OptionalResult<T, E> verifyValue(final Function<T, VoidResult<E>> verifier) {
+        Objects.requireNonNull(verifier);
         final var voidResult = verifier.apply(value);
         return voidResult.toOptionalResult(value);
     }
