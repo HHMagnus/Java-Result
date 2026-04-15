@@ -31,4 +31,5 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
 
     <R> OptionalResult<R, E> map(Function<Optional<T>, Optional<R>> mapper);
     <R> OptionalResult<R, E> flatMap(Function<Optional<T>, OptionalResult<R, E>> mapper);
+    <R> Result<R, E> flatMapWithResult(Function<Optional<T>, Result<R, E>> mapper);
 }

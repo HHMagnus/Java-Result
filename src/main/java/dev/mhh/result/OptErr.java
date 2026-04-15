@@ -44,6 +44,11 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
     }
 
     @Override
+    public <R> Result<R, E> flatMapWithResult(final Function<Optional<T>, Result<R, E>> mapper) {
+        return Result.err(err);
+    }
+
+    @Override
     public Optional<E> error() {
         return Optional.of(err);
     }
