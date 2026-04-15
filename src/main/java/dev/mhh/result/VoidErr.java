@@ -71,6 +71,11 @@ public record VoidErr<E>(E err) implements VoidResult<E>, Serializable {
     }
 
     @Override
+    public VoidResult<E> verify(VoidResult<E> verified) {
+        return this;
+    }
+
+    @Override
     public VoidResult<E> verify(Supplier<VoidResult<E>> consumer) {
         return this;
     }

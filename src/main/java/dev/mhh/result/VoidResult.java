@@ -20,5 +20,6 @@ public sealed interface VoidResult<E>
     <R> OptionalResult<R, E> toOptionalResult(R optionalValue);
     <R> OptionalResult<R, E> toOptionalResult();
 
+    VoidResult<E> verify(VoidResult<E> verified);
     VoidResult<E> verify(Supplier<VoidResult<E>> consumer);
 }
