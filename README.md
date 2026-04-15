@@ -8,7 +8,6 @@ TODO:
 
 OptionalResult
 ```java
-<R> OptionalResult<R, E> map(Function<Optional<T>, Optional<R>> mapper);
 <R> OptionalResult<R, E> flatMap(Function<Optional<T>, OptionalResult<R, E>> mapper);
 <R> Result<R, E> flatMapWithResult(Function<Optional<T>, Result<R, E>> mapper);
 OptionalResult<T, E> consume(Consumer<Optional<T>> consumer);

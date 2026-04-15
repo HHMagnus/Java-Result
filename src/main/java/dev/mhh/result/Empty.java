@@ -29,6 +29,13 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     }
 
     @Override
+    public <R> OptionalResult<R, E> map(Function<Optional<T>, Optional<R>> mapper) {
+        final var optional = mapper.apply(Optional.empty());
+        return optional.map(OptionalResult::<R, E>ok)
+                .orElse(OptionalResult.empty());
+    }
+
+    @Override
     public String toString() {
         return "Empty";
     }

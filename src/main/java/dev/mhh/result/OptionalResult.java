@@ -23,4 +23,6 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
 
     VoidResult<E> toVoidResult();
     Result<T, E> toResult(Supplier<E> errorIfEmpty);
+
+    <R> OptionalResult<R, E> map(Function<Optional<T>, Optional<R>> mapper);
 }

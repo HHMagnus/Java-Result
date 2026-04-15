@@ -67,4 +67,11 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
     public Result<T, E> toResult(Supplier<E> errorIfEmpty) {
         return Result.ok(value);
     }
+
+    @Override
+    public <R> OptionalResult<R, E> map(Function<Optional<T>, Optional<R>> mapper) {
+        final var optional = mapper.apply(Optional.of(value));
+        return optional.map(OptionalResult::<R, E>ok)
+                .orElse(OptionalResult.empty());
+    }
 }
