@@ -637,6 +637,55 @@ public class OptionalResultTest {
         assertUnchangedErr(error10);
 
         assertFalse(called.get());
+    }
 
+    @Test
+    void mapValueToOptionalPresentWhenPresent() {
+        final var mapped = ok10.mapValueToOptional(x -> Optional.of(x * 2));
+
+        assertTrue(mapped.isOk());
+        assertEquals(Optional.of(20L), mapped.optionalValue());
+        assertEquals(Optional.empty(), mapped.error());
+
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void mapValueToOptionalEmptyWhenPresent() {
+        final var mapped = ok10.mapValueToOptional(x -> x == 10 ? Optional.empty() : Optional.of(250L));
+
+        assertTrue(mapped.isOk());
+        assertEquals(Optional.empty(), mapped.optionalValue());
+        assertEquals(Optional.empty(), mapped.error());
+
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void mapValueToOptionalWhenEmpty() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = okEmpty.mapValueToOptional(x -> {
+            called.set(true);
+            return Optional.of(x);
+        });
+
+        assertUnchangedEmpty(mapped);
+        assertUnchangedEmpty(okEmpty);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void mapValueToOptionalWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = error10.mapValueToOptional(x -> {
+            called.set(true);
+            return Optional.of(x);
+        });
+
+        assertUnchangedErr(mapped);
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
     }
 }
