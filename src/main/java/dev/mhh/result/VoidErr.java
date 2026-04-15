@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public record VoidErr<E>(E err) implements VoidResult<E>, Serializable {
     public VoidErr {
@@ -67,5 +68,10 @@ public record VoidErr<E>(E err) implements VoidResult<E>, Serializable {
     @Override
     public <R> OptionalResult<R, E> toOptionalResult() {
         return OptionalResult.err(err);
+    }
+
+    @Override
+    public VoidResult<E> verify(Supplier<VoidResult<E>> consumer) {
+        return this;
     }
 }

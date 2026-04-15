@@ -209,4 +209,48 @@ class VoidResultTest {
 
         assertUnchangedErr(error10);
     }
+
+    @Test
+    void verifyOkWhenOk() {
+        final var verified = ok.verify(VoidResult::ok);
+
+        assertUnchangedOk(verified);
+        assertUnchangedOk(ok);
+    }
+
+    @Test
+    void verifyOkWhenErr() {
+        final var consumed = new AtomicBoolean(false);
+        final var verified = error10.verify(() -> {
+            consumed.set(true);
+            return VoidResult.ok();
+        });
+
+        assertUnchangedErr(verified);
+        assertUnchangedErr(error10);
+
+        assertFalse(consumed.get());
+    }
+
+    @Test
+    void verifyErrWhenOk() {
+        final var verified = ok.verify(() -> VoidResult.err(10L));
+
+        assertUnchangedErr(verified);
+        assertUnchangedOk(ok);
+    }
+
+    @Test
+    void verifyErrWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var verified = error10.verify(() -> {
+            called.set(true);
+            return VoidResult.err(250L);
+        });
+
+        assertUnchangedErr(verified);
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
 }

@@ -19,11 +19,8 @@ OptionalResult<T, E> verify(Function<Optional<T>, VoidResult<E>> verifier);
 OptionalResult<T, E> consumeValue(Consumer<T> consumer);
 OptionalResult<T, E> verifyValue(Function<T, VoidResult<E>> verifier);
 ```
+
 Result
 ```java
 <R> OptionalResult<R, E> flatMapWithOptionalResult(Function<T, OptionalResult<R, E>> mapper);
-```
-VoidResult
-```java
-VoidResult<E> verify(Supplier<VoidResult<E>> consumer);
 ```

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public record VoidOk<E>() implements VoidResult<E>, Serializable {
     @Override
@@ -60,5 +61,10 @@ public record VoidOk<E>() implements VoidResult<E>, Serializable {
     @Override
     public <R> OptionalResult<R, E> toOptionalResult() {
         return OptionalResult.empty();
+    }
+
+    @Override
+    public VoidResult<E> verify(Supplier<VoidResult<E>> consumer) {
+        return consumer.get();
     }
 }

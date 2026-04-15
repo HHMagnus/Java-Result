@@ -1,6 +1,7 @@
 package dev.mhh.result;
 
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public sealed interface VoidResult<E>
         extends Shared<E, VoidResult<E>>
@@ -18,4 +19,6 @@ public sealed interface VoidResult<E>
     <R> Result<R, E> toResult(R value);
     <R> OptionalResult<R, E> toOptionalResult(R optionalValue);
     <R> OptionalResult<R, E> toOptionalResult();
+
+    VoidResult<E> verify(Supplier<VoidResult<E>> consumer);
 }
