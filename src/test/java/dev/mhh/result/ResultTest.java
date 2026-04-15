@@ -76,13 +76,19 @@ class ResultTest {
 
     @Test
     void mapWhenErr() {
-        final var error20 = error10.map(x -> x * 2);
+        final var called = new AtomicBoolean(false);
+        final var error20 = error10.map(x -> {
+            called.set(true);
+            return x * 2;
+        });
 
         assertTrue(error20.isError());
         assertEquals(Optional.of(10L), error20.error());
         assertEquals(Optional.empty(), error20.optionalValue());
 
         assertUnchangedErr(error10);
+
+        assertFalse(called.get());
     }
 
     @Test
@@ -98,16 +104,22 @@ class ResultTest {
 
     @Test
     void flatMapWhenErr() {
-        final var error20 = error10.flatMap(x -> Result.ok(x * 2));
+        final var called = new AtomicBoolean(false);
+        final var error20 = error10.flatMap(x -> {
+            called.set(true);
+            return Result.ok(x * 2);
+        });
 
         assertUnchangedErr(error20);
         assertUnchangedErr(error10);
+
+        assertFalse(called.get());
     }
 
 
     @Test
     void flatMapErrWhenOk() {
-        final var ok20 = ok10.flatMap(x -> Result.err(20L));
+        final var ok20 = ok10.flatMap(x -> Result.err(x * 2));
 
         assertTrue(ok20.isError());
         assertEquals(Optional.empty(), ok20.optionalValue());
@@ -118,10 +130,16 @@ class ResultTest {
 
     @Test
     void flatMapErrWhenErr() {
-        final var error20 = error10.flatMap(x -> Result.<Long, Long>err(x * 250));
+        final var called = new AtomicBoolean(false);
+        final var error20 = error10.flatMap(x -> {
+            called.set(true);
+            return Result.<Long, Long>err(x * 250);
+        });
 
         assertUnchangedErr(error20);
         assertUnchangedErr(error10);
+
+        assertFalse(called.get());
     }
 
     @Test
@@ -150,7 +168,7 @@ class ResultTest {
     void verifyWhenSuccess() {
         final var consumed = new AtomicBoolean(false);
         final var not20 = ok10.verify(x -> {
-            consumed.set(true);
+            consumed.set(x == 10);
             return VoidResult.ok();
         });
 
@@ -163,7 +181,7 @@ class ResultTest {
     @Test
     void verifyWhenError() {
         final var consumed = new AtomicBoolean(false);
-        final var error20 = error10.verify(x -> {
+        final var error20 = error10.verify(_ -> {
             consumed.set(true);
             return VoidResult.ok();
         });
@@ -178,7 +196,7 @@ class ResultTest {
     void verifyErrWhenSuccess() {
         final var consumed = new AtomicBoolean(false);
         final var err250 = ok10.verify(x -> {
-            consumed.set(true);
+            consumed.set(x == 10);
             return VoidResult.err(250L);
         });
 
@@ -194,7 +212,7 @@ class ResultTest {
     @Test
     void verifyErrWhenError() {
         final var consumed = new AtomicBoolean(false);
-        final var error10Still = error10.verify(x -> {
+        final var error10Still = error10.verify(_ -> {
             consumed.set(true);
             return VoidResult.err(250L);
         });
@@ -208,7 +226,6 @@ class ResultTest {
     @Test
     void runIfOkWhenOk() {
         final var consumed = new AtomicBoolean(false);
-
         final var okRan = ok10.runIfOk(() -> consumed.set(true));
 
         assertUnchangedOk(okRan);
@@ -220,7 +237,6 @@ class ResultTest {
     @Test
     void runIfOkWhenErr() {
         final var consumed = new AtomicBoolean(false);
-
         final var error10Ran = error10.runIfOk(() -> consumed.set(true));
 
         assertUnchangedErr(error10Ran);
@@ -232,7 +248,6 @@ class ResultTest {
     @Test
     void runIfErrorWhenOk() {
         final var consumed = new AtomicBoolean(false);
-
         final var ok10Ran = ok10.runIfError(() -> consumed.set(true));
 
         assertUnchangedOk(ok10Ran);
@@ -243,7 +258,6 @@ class ResultTest {
     @Test
     void runIfErrorWhenErr() {
         final var consumed = new AtomicBoolean(false);
-
         final var error10Ran = error10.runIfError(() -> consumed.set(true));
 
         assertUnchangedErr(error10Ran);
@@ -286,7 +300,7 @@ class ResultTest {
     @Test
     void consumeErrorWhenErr() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = error10.consumeError(_ -> consumed.set(true));
+        final var consumedResult = error10.consumeError(x -> consumed.set(x == 10));
 
         assertUnchangedErr(consumedResult);
         assertUnchangedErr(error10);
@@ -315,10 +329,16 @@ class ResultTest {
 
     @Test
     void mapErrorWhenOk() {
-        final var mappedResult = ok10.mapError(e -> e + 1);
+        final var called = new AtomicBoolean(false);
+        final var mappedResult = ok10.mapError(e -> {
+            called.set(true);
+            return e + 1;
+        });
 
         assertUnchangedOk(mappedResult);
         assertUnchangedOk(ok10);
+
+        assertFalse(called.get());
     }
 
     @Test
@@ -335,7 +355,7 @@ class ResultTest {
 
     @Test
     void mapToOptionalEmptyWhenOk() {
-        final var mappedResult = ok10.mapToOptional(x -> Optional.empty());
+        final var mappedResult = ok10.mapToOptional(x -> 10L == x ? Optional.empty() : Optional.of(250L));
 
         assertTrue(mappedResult.isOk());
         assertEquals(Optional.empty(), mappedResult.optionalValue());
@@ -344,7 +364,11 @@ class ResultTest {
 
     @Test
     void mapToOptionalEmptyWhenErr() {
-        final var mappedResult = error10.mapToOptional(x -> Optional.empty());
+        final var called = new AtomicBoolean(false);
+        final var mappedResult = error10.mapToOptional(_ -> {
+            called.set(true);
+            return Optional.empty();
+        });
 
         assertTrue(mappedResult.isError());
         assertFalse(mappedResult.isOk());
@@ -352,6 +376,8 @@ class ResultTest {
         assertEquals(Optional.empty(), mappedResult.optionalValue());
 
         assertUnchangedErr(error10);
+
+        assertFalse(called.get());
     }
 
     @Test
@@ -367,13 +393,19 @@ class ResultTest {
 
     @Test
     void mapToOptionalPresentWhenErr() {
-        final var mappedResult = error10.mapToOptional(x -> Optional.of(x * 2));
+        final var called = new AtomicBoolean(false);
+        final var mappedResult = error10.mapToOptional(x -> {
+            called.set(true);
+            return Optional.of(x * 2);
+        });
 
         assertTrue(mappedResult.isError());
         assertEquals(Optional.of(10L), mappedResult.error());
         assertEquals(Optional.empty(), mappedResult.optionalValue());
 
         assertUnchangedErr(error10);
+
+        assertFalse(called.get());
     }
 
     @Test
@@ -389,7 +421,7 @@ class ResultTest {
 
     @Test
     void mapToOptionalResultEmptyWhenOk() {
-        final var mappedResult = ok10.flatMapWithOptionalResult(x -> OptionalResult.empty());
+        final var mappedResult = ok10.flatMapWithOptionalResult(x -> x == 10L ? OptionalResult.empty() : OptionalResult.ok(250L));
 
         assertTrue(mappedResult.isOk());
         assertEquals(Optional.empty(), mappedResult.optionalValue());
@@ -400,7 +432,7 @@ class ResultTest {
 
     @Test
     void mapToOptionalResultErrWhenOk() {
-        final var mappedResult = ok10.flatMapWithOptionalResult(x -> OptionalResult.err(250L));
+        final var mappedResult = ok10.flatMapWithOptionalResult(x -> x == 10L ? OptionalResult.err(250L) : OptionalResult.empty());
 
         assertFalse(mappedResult.isOk());
         assertTrue(mappedResult.isError());

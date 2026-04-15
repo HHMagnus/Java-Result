@@ -89,7 +89,6 @@ class VoidResultTest {
     @Test
     void runIfOkWhenOk() {
         final var consumed = new AtomicBoolean(false);
-
         final var okRan = ok.runIfOk(() -> consumed.set(true));
 
         assertUnchangedOk(okRan);
@@ -101,7 +100,6 @@ class VoidResultTest {
     @Test
     void runIfOkWhenErr() {
         final var consumed = new AtomicBoolean(false);
-
         final var error10Ran = error10.runIfOk(() -> consumed.set(true));
 
         assertUnchangedErr(error10Ran);
@@ -113,7 +111,6 @@ class VoidResultTest {
     @Test
     void runIfErrorWhenOk() {
         final var consumed = new AtomicBoolean(false);
-
         final var okRan = ok.runIfError(() -> consumed.set(true));
 
         assertUnchangedOk(okRan);
@@ -124,7 +121,6 @@ class VoidResultTest {
     @Test
     void runIfErrorWhenErr() {
         final var consumed = new AtomicBoolean(false);
-
         final var error10Ran = error10.runIfError(() -> consumed.set(true));
 
         assertUnchangedErr(error10Ran);
@@ -147,7 +143,7 @@ class VoidResultTest {
     @Test
     void consumeErrorWhenErr() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = error10.consumeError(_ -> consumed.set(true));
+        final var consumedResult = error10.consumeError(x -> consumed.set(x == 10));
 
         assertUnchangedErr(consumedResult);
         assertUnchangedErr(error10);

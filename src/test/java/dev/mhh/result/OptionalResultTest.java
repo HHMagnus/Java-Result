@@ -266,18 +266,30 @@ public class OptionalResultTest {
 
     @Test
     void mapErrorWhenPresent() {
-        final var mappedResult = ok10.mapError(x -> x * 2);
+        final var called = new AtomicBoolean(false);
+        final var mappedResult = ok10.mapError(x -> {
+            called.set(true);
+            return x * 2;
+        });
 
         assertUnchangedPresent(mappedResult);
         assertUnchangedPresent(ok10);
+
+        assertFalse(called.get());
     }
 
     @Test
     void mapErrorWhenEmpty() {
-        final var mappedResult = okEmpty.mapError(x -> x * 2);
+        final var called = new AtomicBoolean(false);
+        final var mappedResult = okEmpty.mapError(x -> {
+            called.set(true);
+            return x * 2;
+        });
 
         assertUnchangedEmpty(mappedResult);
         assertUnchangedEmpty(okEmpty);
+
+        assertFalse(called.get());
     }
 
     @Test
@@ -410,7 +422,7 @@ public class OptionalResultTest {
     @Test
     void flatMapToEmptyWhenErr() {
         final var called = new AtomicBoolean(false);
-        final var mappedResult = error10.flatMap(x -> {
+        final var mappedResult = error10.flatMap(_ -> {
             called.set(true);
             return OptionalResult.<Long, Long>empty();
         });

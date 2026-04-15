@@ -15,5 +15,3 @@ OptionalResult
 OptionalResult<T, E> consumeValue(Consumer<T> consumer);
 OptionalResult<T, E> verifyValue(Function<T, VoidResult<E>> verifier);
 ```
-
-All test err test should also verify the supplier/consumer is not called.
