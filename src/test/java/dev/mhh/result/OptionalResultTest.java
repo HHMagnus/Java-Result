@@ -516,4 +516,63 @@ public class OptionalResultTest {
 
         assertFalse(called.get());
     }
+
+    @Test
+    void verifyOkWhenPresent() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = ok10.verify(x -> {
+            called.set(Optional.of(10L).equals(x));
+            return VoidResult.ok();
+        });
+
+        assertUnchangedPresent(mapped);
+        assertUnchangedPresent(ok10);
+
+        assertTrue(called.get());
+    }
+
+    @Test
+    void verifyOkWhenEmpty() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = okEmpty.verify(x -> {
+            called.set(Optional.empty().equals(x));
+            return VoidResult.ok();
+        });
+
+        assertUnchangedEmpty(mapped);
+        assertUnchangedEmpty(okEmpty);
+
+        assertTrue(called.get());
+    }
+
+    @Test
+    void verifyErrWhenPresent() {
+        final var mapped = ok10.verify(x -> VoidResult.err(x.orElse(250L)));
+
+        assertUnchangedErr(mapped);
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void verifyErrWhenEmpty() {
+        final var mapped = okEmpty.verify(x -> VoidResult.err(x.orElse(10L)));
+
+        assertUnchangedErr(mapped);
+        assertUnchangedEmpty(okEmpty);
+    }
+
+    @Test
+    void verifyWhenErr() {
+        final var called = new AtomicBoolean(false);
+
+        final var mapped = error10.verify(x -> {
+            called.set(true);
+            return VoidResult.ok();
+        });
+
+        assertUnchangedErr(mapped);
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
 }

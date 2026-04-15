@@ -52,6 +52,12 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     }
 
     @Override
+    public OptionalResult<T, E> verify(final Function<Optional<T>, VoidResult<E>> verifier) {
+        final var voidResult = verifier.apply(Optional.empty());
+        return voidResult.toOptionalResult();
+    }
+
+    @Override
     public String toString() {
         return "Empty";
     }

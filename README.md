@@ -8,8 +8,6 @@ TODO:
 
 OptionalResult
 ```java
-OptionalResult<T, E> verify(Function<Optional<T>, VoidResult<E>> verifier);
-
 <R> OptionalResult<R, E> mapValue(Function<T, R> mapper);
 <R> OptionalResult<R, E> mapValueToOptional(Function<T, Optional<R>> mapper);
 <R> OptionalResult<R, E> flatMapValue(Function<T, OptionalResult<R, E>> mapper);

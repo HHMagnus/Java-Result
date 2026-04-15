@@ -34,4 +34,5 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
     <R> OptionalResult<R, E> flatMap(Function<Optional<T>, OptionalResult<R, E>> mapper);
     <R> Result<R, E> flatMapWithResult(Function<Optional<T>, Result<R, E>> mapper);
     OptionalResult<T, E> consume(Consumer<Optional<T>> consumer);
+    OptionalResult<T, E> verify(Function<Optional<T>, VoidResult<E>> verifier);
 }

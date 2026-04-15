@@ -90,4 +90,10 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
         consumer.accept(Optional.of(value));
         return this;
     }
+
+    @Override
+    public OptionalResult<T, E> verify(final Function<Optional<T>, VoidResult<E>> verifier) {
+        final var voidResult = verifier.apply(Optional.of(value));
+        return voidResult.toOptionalResult(value);
+    }
 }
