@@ -12,7 +12,7 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
         return new Present<>(value);
     }
 
-    // This helps fluently transform an Optional into an OptionalResult
+    // This helps fluently transform a returned Optional into an OptionalResult
     @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     static <T, E> OptionalResult<T, E> okOptional(Optional<T> optionalValue) {
         return optionalValue.map(OptionalResult::<T, E>ok)
@@ -37,4 +37,6 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
     <R> Result<R, E> flatMapWithResult(Function<Optional<T>, Result<R, E>> mapper);
     OptionalResult<T, E> consume(Consumer<Optional<T>> consumer);
     OptionalResult<T, E> verify(Function<Optional<T>, VoidResult<E>> verifier);
+
+    <R> OptionalResult<R, E> mapValue(Function<T, R> mapper);
 }

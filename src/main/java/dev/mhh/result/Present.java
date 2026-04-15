@@ -96,4 +96,10 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
         final var voidResult = verifier.apply(Optional.of(value));
         return voidResult.toOptionalResult(value);
     }
+
+    @Override
+    public <R> OptionalResult<R, E> mapValue(final Function<T, R> mapper) {
+        final var mappedValue = mapper.apply(value);
+        return OptionalResult.ok(mappedValue);
+    }
 }
