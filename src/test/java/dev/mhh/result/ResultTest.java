@@ -8,8 +8,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ResultTest {
-    Result<Long, Long> ok10 = Result.ok(10L);
-    Result<Long, Long> error10 = Result.err(10L);
+    private final Result<Long, Long> ok10 = Result.ok(10L);
+    private final Result<Long, Long> error10 = Result.err(10L);
 
     private void assertUnchangedOk(Result<Long, Long> ok10) {
         assertTrue(ok10.isOk());

@@ -12,6 +12,8 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
         return new Present<>(value);
     }
 
+    // This helps fluently transform an Optional into an OptionalResult
+    @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
     static <T, E> OptionalResult<T, E> okOptional(Optional<T> optionalValue) {
         return optionalValue.map(OptionalResult::<T, E>ok)
                 .orElse(OptionalResult.empty());

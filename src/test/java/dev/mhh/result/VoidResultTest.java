@@ -7,11 +7,10 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 
 class VoidResultTest {
-    VoidResult<Long> ok = VoidResult.ok();
-    VoidResult<Long> error10 = VoidResult.err(10L);
+    private final VoidResult<Long> ok = VoidResult.ok();
+    private final VoidResult<Long> error10 = VoidResult.err(10L);
 
     private void assertUnchangedOk(VoidResult<Long> ok) {
         assertTrue(ok.isOk());

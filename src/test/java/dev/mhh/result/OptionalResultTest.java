@@ -8,9 +8,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class OptionalResultTest {
-    OptionalResult<Long, Long> ok10 = OptionalResult.ok(10L);
-    OptionalResult<Long, Long> okEmpty = OptionalResult.empty();
-    OptionalResult<Long, Long> error10 = OptionalResult.err(10L);
+    private final OptionalResult<Long, Long> ok10 = OptionalResult.ok(10L);
+    private final OptionalResult<Long, Long> okEmpty = OptionalResult.empty();
+    private final OptionalResult<Long, Long> error10 = OptionalResult.err(10L);
 
     private void assertUnchangedPresent(OptionalResult<Long, Long> result) {
         assertTrue(result.isOk());
