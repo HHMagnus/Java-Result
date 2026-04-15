@@ -34,6 +34,7 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
 
     @Override
     public OptionalResult<T, E> runIfOk(Runnable runnable) {
+        Objects.requireNonNull(runnable);
         runnable.run();
         return this;
     }

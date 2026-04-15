@@ -1,6 +1,7 @@
 package dev.mhh.result;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -24,6 +25,7 @@ public record VoidOk<E>() implements VoidResult<E>, Serializable {
 
     @Override
     public VoidResult<E> runIfOk(Runnable runnable) {
+        Objects.requireNonNull(runnable);
         runnable.run();
         return this;
     }

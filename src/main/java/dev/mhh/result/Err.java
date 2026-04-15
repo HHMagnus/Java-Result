@@ -17,8 +17,9 @@ public record Err<T, E>(E err) implements Result<T, E>, Serializable {
     }
 
     @Override
-    public <N> Result<T, N> mapError(Function<E, N> function) {
-        final var error = function.apply(err);
+    public <N> Result<T, N> mapError(Function<E, N> mapper) {
+        Objects.requireNonNull(mapper);
+        final var error = mapper.apply(err);
         return Result.err(error);
     }
 
@@ -44,12 +45,14 @@ public record Err<T, E>(E err) implements Result<T, E>, Serializable {
 
     @Override
     public Result<T, E> runIfError(Runnable runnable) {
+        Objects.requireNonNull(runnable);
         runnable.run();
         return this;
     }
 
     @Override
     public Result<T, E> consumeError(Consumer<E> consumer) {
+        Objects.requireNonNull(consumer);
         consumer.accept(err);
         return this;
     }

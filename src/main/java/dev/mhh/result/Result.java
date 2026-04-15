@@ -8,17 +8,43 @@ public sealed interface Result<T, E>
         extends Shared<E, Result<T, E>>
         permits Err, Ok {
 
+    /**
+     * Creates an ok Result
+     * @param value the value to be wrapped in the Result. Cannot be null.
+     * @return a Result containing the value.
+     * @param <T> the type of the value.
+     * @param <E> the type of the error.
+     * @throws NullPointerException if the value is null.
+     */
     static <T, E> Result<T, E> ok(T value) {
         return new Ok<>(value);
     }
 
-    static <T, E> Result<T, E> err(E value) {
-        return new Err<>(value);
+    /**
+     * Creates an error Result
+     * @param error the error value. Cannot be null.
+     * @return an error Result containing the error value.
+     * @param <T> the type of the value.
+     * @param <E> the type of the error.
+     * @throws NullPointerException if the value is null.
+     */
+    static <T, E> Result<T, E> err(E error) {
+        return new Err<>(error);
     }
 
+    /**
+     * @return the value if the Result is an Ok, otherwise returns an empty Optional.
+     */
     Optional<T> optionalValue();
 
-    <N> Result<T, N> mapError(Function<E, N> function);
+    /**
+     * Maps the error value of the Result to a different error value.
+     * @param mapper the mapper function. This is only called if the Result is an error.
+     * @return a new Result with the mapped error value.
+     * @param <N> the new error type.
+     * @throws NullPointerException if the mapper function is null and the Result is an error.
+     */
+    <N> Result<T, N> mapError(Function<E, N> mapper);
 
     <R> Result<R, E> map(Function<T, R> mapper);
     <R> Result<R, E> flatMap(Function<T, Result<R, E>> mapper);

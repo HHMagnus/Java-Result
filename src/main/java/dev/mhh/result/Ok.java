@@ -22,7 +22,7 @@ public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
     }
 
     @Override
-    public <N> Result<T, N> mapError(Function<E, N> function) {
+    public <N> Result<T, N> mapError(Function<E, N> mapper) {
         return Result.ok(value);
     }
 
@@ -38,6 +38,7 @@ public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
 
     @Override
     public Result<T, E> runIfOk(Runnable runnable) {
+        Objects.requireNonNull(runnable);
         runnable.run();
         return this;
     }

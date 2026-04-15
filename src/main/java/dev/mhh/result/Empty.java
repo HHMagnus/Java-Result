@@ -1,6 +1,7 @@
 package dev.mhh.result;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -104,6 +105,7 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
 
     @Override
     public OptionalResult<T, E> runIfOk(Runnable runnable) {
+        Objects.requireNonNull(runnable);
         runnable.run();
         return this;
     }

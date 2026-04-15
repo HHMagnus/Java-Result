@@ -34,12 +34,14 @@ public record VoidErr<E>(E err) implements VoidResult<E>, Serializable {
 
     @Override
     public VoidResult<E> runIfError(Runnable runnable) {
+        Objects.requireNonNull(runnable);
         runnable.run();
         return this;
     }
 
     @Override
     public VoidResult<E> consumeError(Consumer<E> consumer) {
+        Objects.requireNonNull(consumer);
         consumer.accept(err);
         return this;
     }

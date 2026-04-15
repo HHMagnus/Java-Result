@@ -105,6 +105,7 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
 
     @Override
     public OptionalResult<T, E> runIfError(Runnable runnable) {
+        Objects.requireNonNull(runnable);
         runnable.run();
         return this;
     }
@@ -116,6 +117,7 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
 
     @Override
     public OptionalResult<T, E> consumeError(Consumer<E> consumer) {
+        Objects.requireNonNull(consumer);
         consumer.accept(err);
         return this;
     }
