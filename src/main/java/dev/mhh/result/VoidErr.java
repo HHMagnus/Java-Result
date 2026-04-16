@@ -53,6 +53,7 @@ public record VoidErr<E>(E err) implements VoidResult<E>, Serializable {
 
     @Override
     public <N> VoidResult<N> mapError(Function<E, N> function) {
+        Objects.requireNonNull(function);
         final var error = function.apply(err);
         return VoidResult.err(error);
     }
