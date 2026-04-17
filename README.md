@@ -9,6 +9,7 @@ A type-safe Result library for Java, inspired by Rust's `Result<T, E>`. Instead 
 - **Cyclomatic complexity of 1** — no `if` statements in the library itself
 - **Fluent chaining** — convert and transform across all three result types
 - **Serializable by default** — as long as your generic types are serializable
+- **100% test coverage** — quite easy without branching
 
 > **Note:** Because errors are explicit types, combining results (e.g. `Result.combine(...)`) and working with lists of results require manual handling.
 
