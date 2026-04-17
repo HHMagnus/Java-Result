@@ -3,7 +3,18 @@ package dev.mhh.result;
 import java.util.Optional;
 import java.util.function.Consumer;
 
+/**
+ * Shared behaviour across all result types: {@link Result}, {@link VoidResult},
+ * and {@link OptionalResult}.
+ *
+ * <p>Provides common state-inspection methods ({@link #isOk()}, {@link #isError()}, {@link #error()})
+ * and fluent side-effect methods that only act when the result is in a specific state.
+ *
+ * @param <E> the type of the error.
+ * @param <T> the concrete result type (self-referential bound for fluent return types).
+ */
 interface Shared<E, T extends Shared<E, T>> {
+
     /**
      * @return Optional.of(err) if the result is an error, Optional.empty() otherwise.
      */

@@ -1,79 +1,105 @@
-# Result<T, E> - Java
+# Result&lt;T, E&gt; for Java
 
-This library is an implementation of `Result<T, E>` in Java. It is heavily inspired by the *Rust* implementation, but uses *Java* names where appropriate.
+A type-safe Result library for Java, inspired by Rust's `Result<T, E>`. Instead of throwing exceptions, methods return explicit success or failure values — making error handling visible, composable, and impossible to accidentally ignore.
 
-This unique features of this specific implementation is:
-- `switch` pattern match over the result types.
-- No inheritance, everything is `sealed interface`s and `record`s.
-- Cyclomatic complexity of 1. There is no `if` statements in the code.
-- Fluent chaining between the result types.
-- Serializable by default (depends on generic types serializability)
+## Features
 
-Due to the explicit error types the implementation does not support `combine` and result lists easily.
+- **Pattern matching** — use `switch` expressions directly over result types
+- **Sealed interfaces and records** — no class hierarchies; everything is a closed, known type
+- **Cyclomatic complexity of 1** — no `if` statements in the library itself
+- **Fluent chaining** — convert and transform across all three result types
+- **Serializable by default** — as long as your generic types are serializable
 
-# Example
+> **Note:** Because errors are explicit types, combining results (e.g. `Result.combine(...)`) and working with lists of results require manual handling.
 
-Instead of throwing an `Exception` you can return a `Result<T, E>`:
+---
+
+## The three result types
+
+| Type | States | Use when |
+|---|---|---|
+| `Result<T, E>` | `Ok(T)` or `Err(E)` | An operation that either succeeds with a value or fails |
+| `OptionalResult<T, E>` | `Present(T)`, `Empty`, or `OptErr(E)` | An operation that may succeed with a value, succeed with nothing, or fail |
+| `VoidResult<E>` | `VoidOk` or `VoidErr(E)` | An operation that either succeeds (with no value) or fails |
+
+---
+
+## Quick start
+
+Instead of throwing an exception, return a `Result`:
+
 ```java
-Result<String, String> verifyInput(String input) {
-    final var trimmed = input.trim();
-    if (trimmed.isBlank()) {
-        return Result.err("Input is required");
-    }
+Result<String, String> parseInput(String input) {
+    var trimmed = input.trim();
+    if (trimmed.isBlank()) return Result.err("Input is required");
     return Result.ok(trimmed);
 }
 ```
 
-This allows any caller of that function to specify how they want to handle the `Result`:
-```java
-void internalMethod(String input) {
-    final var result = verifyInput(input);
-    switch (result) {
-        case Ok(var value) -> handleInput(value);
-        case Err(var err) -> throw new RuntimeException("Input should already have been confirmed, but got: " + err);
-    }
-}
+Callers decide how to handle the result — with a `switch` expression, fluent chain, or any combination:
 
+```java
+// Pattern match: handle each case explicitly
 Json restEndpoint(String input) {
-    final var result = verifyInput(input);
-    return switch (result) {
+    return switch (parseInput(input)) {
         case Ok(var value) -> buildSuccess(value);
-        case Err(var err) -> buildError(err);
+        case Err(var err)  -> buildError(err);
     };
 }
+
+// Or throw in contexts where the error is truly unexpected
+void internalMethod(String input) {
+    switch (parseInput(input)) {
+        case Ok(var value) -> process(value);
+        case Err(var err)  -> throw new IllegalStateException("Unexpected error: " + err);
+    }
+}
 ```
-Allowing either for it to be handle or for them to throw if appropriate.
 
-# Result types
+---
 
-The library contains three result types:
-- `Result<T, E>` - Either `Ok(T value)` or `Err(E err)`.
-- `OptionalResult<T, E>` - Either `Present(T value)`, `Empty` or `OptErr(E err)`.
-- `VoidResult<E>` - Either `VoidOk` or `VoidErr(E err)`
+## Fluent chaining
 
-# Fluent chaining
+Results can be transformed and converted across types in a single chain, without intermediate variables or defensive checks at each step:
 
-These can be chained between fluently:
 ```java
-VoidResult result = Result.ok(initial)
-        .map(input -> input.trim())
-        .mapToOptional(input -> Optional.of(input).filter(Predicate.not(String::isBlank)))
-        .toResult(() -> "default value")
-        .verify(InputVerifier::verify)
-        .toVoidResult();
+VoidResult<String> result = Result.ok(rawInput)
+    .map(String::trim)
+    .mapToOptional(s -> Optional.of(s).filter(Predicate.not(String::isBlank)))
+    .toResult(() -> "Input must not be blank")
+    .verify(InputVerifier::verify)
+    .toVoidResult();
 ```
 
-# Naming patterns
+If any step produces an error, the rest of the chain short-circuits — the error is carried through unchanged.
 
-The naming patterns is as follows:
-- `flat` specifies merging two results.
-- `map` specifies going from one *value type* to another.
-    - `mapError` is the same for *error type*.
-    - Can be combined with `flatMap` for mapping into a result and merging them.
-- `consume` allows code to be run with the inner *value*
-  - `consumeError` is the same for the inner *error*.
-- `run` runs a runnable depending on the scenario
-- `ok` and `err` used for construction depending on type.
-- `toResult` or `toVoidResult` or `toOptionalResult` to go between result types
-- `verify` to verify the value with a `VoidResult`.
-- `value` for running `OptionalResult` when the *value* is present.
+---
+
+## Naming conventions
+
+The API follows consistent naming patterns:
+
+| Prefix / name | Meaning |
+|---|---|
+| `map` | Transform the **value** to a new type |
+| `mapError` | Transform the **error** to a new type |
+| `flatMap` | Transform the value into a new result and flatten (merge) it |
+| `consume` | Run a side effect with the **value** (returns the same result) |
+| `consumeError` | Run a side effect with the **error** |
+| `run` | Run a `Runnable` depending on the result state |
+| `verify` | Validate the value with a function returning `VoidResult` |
+| `value` | Suffix on `OptionalResult` methods — only acts when a value is **present** |
+| `ok` / `err` | Factory methods for construction |
+| `toResult` / `toVoidResult` / `toOptionalResult` | Convert between result types |
+
+### `value` suffix on `OptionalResult`
+
+`OptionalResult` has two sets of transformation methods. Without the `value` suffix, the method receives an `Optional<T>` and operates on all non-error states (present or empty). With the suffix, it only fires when a value is actually present:
+
+```java
+// Operates on Optional<T> — runs whether value is present or empty
+optionalResult.map(optional -> optional.map(String::toUpperCase));
+
+// Only runs when a value is present — empty passes through unchanged
+optionalResult.mapValue(String::toUpperCase);
+```
