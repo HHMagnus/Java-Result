@@ -126,6 +126,16 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
     }
 
     @Override
+    public OptionalResult<T, E> verifyValue(Predicate<T> predicate, E error) {
+        return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> verifyValue(Predicate<T> predicate, Supplier<E> errorSupplier) {
+        return this;
+    }
+
+    @Override
     public <X extends Throwable> Optional<T> orElseThrow(Function<E, X> exceptionSupplier) throws X {
         Objects.requireNonNull(exceptionSupplier);
         throw Objects.requireNonNull(exceptionSupplier.apply(err));

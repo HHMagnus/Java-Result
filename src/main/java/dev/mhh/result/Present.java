@@ -183,6 +183,16 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
     }
 
     @Override
+    public OptionalResult<T, E> verifyValue(Predicate<T> predicate, E error) {
+        return verifyValue(VoidResult.validate(predicate, error));
+    }
+
+    @Override
+    public OptionalResult<T, E> verifyValue(Predicate<T> predicate, Supplier<E> errorSupplier) {
+        return verifyValue(VoidResult.validate(predicate, errorSupplier));
+    }
+
+    @Override
     public <X extends Throwable> Optional<T> orElseThrow(Function<E, X> exceptionSupplier) throws X {
         return Optional.of(value);
     }

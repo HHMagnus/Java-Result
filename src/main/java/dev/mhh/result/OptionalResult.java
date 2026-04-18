@@ -303,6 +303,28 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
     OptionalResult<T, E> verifyValue(Function<T, VoidResult<E>> verifier);
 
     /**
+     * Verifies the present value using the given predicate.
+     * If verification fails, the returned error replaces this result.
+     * If this is an error result, the predicate is not called.
+     *
+     * @param predicate the predicate to test the value.
+     * @param error the error to return if the predicate fails.
+     * @return this result if verification passes, or an error result if verification fails.
+     */
+    OptionalResult<T, E> verifyValue(Predicate<T> predicate, E error);
+
+    /**
+     * Verifies the present value using the given predicate.
+     * If verification fails, the returned error replaces this result.
+     * If this is an error result, the predicate is not called.
+     *
+     * @param predicate the predicate to test the value.
+     * @param errorSupplier the supplier of the error to return if the predicate fails.
+     * @return this result if verification passes, or an error result if verification fails.
+     */
+    OptionalResult<T, E> verifyValue(Predicate<T> predicate, Supplier<E> errorSupplier);
+
+    /**
      * For an Ok (Present or Empty) {@code OptionalResult} it gives back the optional value.
      * For an Err {@code OptionalResult} it will throw the exception provided by the {@code exceptionSupplier}
      * @param exceptionSupplier Supplier of the exception to throw if {@code OptionalResult} is an error
