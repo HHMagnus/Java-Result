@@ -112,6 +112,22 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
     boolean isEmpty();
 
     /**
+     * Run the given runnable if the result is present.
+     * @param runnable to run. This only runs if the result is present.
+     * @return the result for fluent chaining.
+     * @throws NullPointerException if the runnable is null and the result is present.
+     */
+    OptionalResult<T, E> runIfPresent(Runnable runnable);
+
+    /**
+     * Run the given runnable if the result is empty.
+     * @param runnable to run. This only runs if the result is empty.
+     * @return the result for fluent chaining.
+     * @throws NullPointerException if the runnable is null and the result is empty.
+     */
+    OptionalResult<T, E> runIfEmpty(Runnable runnable);
+
+    /**
      * Maps the error value to a different error type, leaving present and empty states unchanged.
      *
      * @param function the mapping function applied to the error. Only called if this is an error result.

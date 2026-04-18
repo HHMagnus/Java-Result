@@ -73,7 +73,6 @@ public class OptionalResultTest {
         final var error = OptionalResult.<Long, Long>err(10L);
         assertUnchangedErr(error);
 
-
         assertFalse(error.isPresent());
         assertFalse(error.isEmpty());
     }
@@ -897,6 +896,72 @@ public class OptionalResultTest {
         });
 
         assertUnchangedErr(mapped);
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void runIfPresentWhenPresent() {
+        final var called = new AtomicBoolean(false);
+        final var ran = ok10.runIfPresent(() -> called.set(true));
+
+        assertUnchangedPresent(ran);
+        assertUnchangedPresent(ok10);
+
+        assertTrue(called.get());
+    }
+
+    @Test
+    void runIfPresentWhenEmpty() {
+        final var called = new AtomicBoolean(false);
+        final var ran = okEmpty.runIfPresent(() -> called.set(true));
+
+        assertUnchangedEmpty(ran);
+        assertUnchangedEmpty(okEmpty);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void runIfPresentWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var ran = error10.runIfPresent(() -> called.set(true));
+
+        assertUnchangedErr(ran);
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void runIfEmptyWhenPresent() {
+        final var called = new AtomicBoolean(false);
+        final var ran = ok10.runIfEmpty(() -> called.set(true));
+
+        assertUnchangedPresent(ran);
+        assertUnchangedPresent(ok10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void runIfEmptyWhenEmpty() {
+        final var called = new AtomicBoolean(false);
+        final var ran = okEmpty.runIfEmpty(() -> called.set(true));
+
+        assertUnchangedEmpty(ran);
+        assertUnchangedEmpty(okEmpty);
+
+        assertTrue(called.get());
+    }
+
+    @Test
+    void runIfEmptyWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var ran = error10.runIfEmpty(() -> called.set(true));
+
+        assertUnchangedErr(ran);
         assertUnchangedErr(error10);
 
         assertFalse(called.get());

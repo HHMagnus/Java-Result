@@ -25,6 +25,18 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     }
 
     @Override
+    public OptionalResult<T, E> runIfPresent(Runnable runnable) {
+        return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> runIfEmpty(Runnable runnable) {
+        Objects.requireNonNull(runnable);
+        runnable.run();
+        return this;
+    }
+
+    @Override
     public <N> OptionalResult<T, N> mapError(Function<E, N> function) {
         return OptionalResult.empty();
     }

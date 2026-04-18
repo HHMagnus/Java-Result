@@ -66,6 +66,18 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
     }
 
     @Override
+    public OptionalResult<T, E> runIfPresent(Runnable runnable) {
+        Objects.requireNonNull(runnable);
+        runnable.run();
+        return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> runIfEmpty(Runnable runnable) {
+        return this;
+    }
+
+    @Override
     public <N> OptionalResult<T, N> mapError(Function<E, N> function) {
         return OptionalResult.ok(value);
     }
