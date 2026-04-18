@@ -966,4 +966,100 @@ public class OptionalResultTest {
 
         assertFalse(called.get());
     }
+
+    @Test
+    void orElseThrowWhenPresent() {
+        final var called = new AtomicBoolean(false);
+        final var result = ok10.orElseThrow(_ -> {
+            called.set(true);
+            return new RuntimeException("Error");
+        });
+
+        assertEquals(Optional.of(10L), result);
+        assertUnchangedPresent(ok10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void orElseThrowWhenEmpty() {
+        final var called = new AtomicBoolean(false);
+        final var result = okEmpty.orElseThrow(_ -> {
+            called.set(true);
+            return new RuntimeException("Error");
+        });
+
+        assertEquals(Optional.empty(), result);
+        assertUnchangedEmpty(okEmpty);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void orElseThrowWhenErr() {
+        final var thrown = assertThrows(RuntimeException.class, () -> error10.orElseThrow(x -> new RuntimeException("Error: " + x)));
+
+        assertEquals("Error: 10", thrown.getMessage());
+        assertUnchangedErr(error10);
+    }
+
+    @Test
+    void orElseThrowIfEmptyWhenPresent() {
+        final var ifEmptyCalled = new AtomicBoolean(false);
+        final var exceptionSupplierCalled = new AtomicBoolean(false);
+        final var result = ok10.orElseThrow(() -> {
+            ifEmptyCalled.set(true);
+            return 250L;
+        }, x -> {
+            exceptionSupplierCalled.set(true);
+            return new RuntimeException("Error: " + x);
+        });
+
+        assertEquals(10L, result);
+        assertUnchangedPresent(ok10);
+
+        assertFalse(ifEmptyCalled.get());
+        assertFalse(exceptionSupplierCalled.get());
+    }
+
+    @Test
+    void orElseThrowIfEmptyWhenEmpty() {
+        final var ifEmptyCalled = new AtomicBoolean(false);
+        final var exceptionSupplierCalled = new AtomicBoolean(false);
+        final var result = okEmpty.orElseThrow(() -> {
+            ifEmptyCalled.set(true);
+            return 250L;
+        }, x -> {
+            exceptionSupplierCalled.set(true);
+            return new RuntimeException("Error: " + x);
+        });
+
+        assertEquals(250L, result);
+        assertUnchangedEmpty(okEmpty);
+
+        assertTrue(ifEmptyCalled.get());
+        assertFalse(exceptionSupplierCalled.get());
+    }
+
+    @Test
+    void orElseThrowIfEmptyWhenErr() {
+        final var ifEmptyCalled = new AtomicBoolean(false);
+        final var exceptionSupplierCalled = new AtomicBoolean(false);
+        final var thrown = assertThrows(
+                RuntimeException.class,
+                () -> error10.orElseThrow(() -> {
+                    ifEmptyCalled.set(true);
+                    return 250L;
+                }, x -> {
+                    exceptionSupplierCalled.set(true);
+                    return new RuntimeException("Error: " + x);
+                })
+        );
+
+        assertEquals("Error: 10", thrown.getMessage());
+        assertUnchangedErr(error10);
+
+        assertFalse(ifEmptyCalled.get());
+        assertTrue(exceptionSupplierCalled.get());
+    }
 }

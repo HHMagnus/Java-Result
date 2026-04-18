@@ -75,4 +75,9 @@ public record VoidOk<E>() implements VoidResult<E>, Serializable {
         Objects.requireNonNull(consumer);
         return consumer.get();
     }
+
+    @Override
+    public <X extends Throwable> void orElseThrow(Function<E, X> exceptionSupplier) throws X {
+        // do nothing
+    }
 }

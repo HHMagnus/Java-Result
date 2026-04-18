@@ -280,4 +280,25 @@ class VoidResultTest {
         assertUnchangedErr(verified);
         assertUnchangedErr(error10);
     }
+
+    @Test
+    void orElseThrowWhenOk() {
+        final var called = new AtomicBoolean(false);
+        ok.orElseThrow(_ -> {
+            called.set(true);
+            return new RuntimeException("Error");
+        });
+
+        assertUnchangedOk(ok);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void orElseThrowWhenErr() {
+        final var thrown = assertThrows(RuntimeException.class, () -> error10.orElseThrow(x-> new RuntimeException("Error: " + x)));
+
+        assertEquals("Error: 10", thrown.getMessage());
+        assertUnchangedErr(error10);
+    }
 }

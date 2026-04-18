@@ -82,4 +82,10 @@ public record VoidErr<E>(E err) implements VoidResult<E>, Serializable {
     public VoidResult<E> verify(Supplier<VoidResult<E>> consumer) {
         return this;
     }
+
+    @Override
+    public <X extends Throwable> void orElseThrow(Function<E, X> exceptionSupplier) throws X {
+        Objects.requireNonNull(exceptionSupplier);
+        throw Objects.requireNonNull(exceptionSupplier.apply(err));
+    }
 }

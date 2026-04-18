@@ -115,4 +115,9 @@ public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
         final var optional = Optional.of(value).filter(filter);
         return OptionalResult.okOptional(optional);
     }
+
+    @Override
+    public <X extends Throwable> T orElseThrow(Function<E, X> exceptionSupplier) throws X {
+        return value;
+    }
 }

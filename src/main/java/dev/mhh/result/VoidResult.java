@@ -98,4 +98,14 @@ public sealed interface VoidResult<E>
      * @throws NullPointerException if the supplier is null and this result is ok.
      */
     VoidResult<E> verify(Supplier<VoidResult<E>> supplier);
+
+    /**
+     * For an Ok {@code VoidResult} it does nothing.
+     * For an Err {@code VoidResult} it will throw the exception provided by the {@code exceptionSupplier}
+     * @param exceptionSupplier Supplier of the exception to throw if {@code VoidResult} is an error
+     * @param <X> Type of exception to throw if {@code VoidResult} is an error
+     * @throws X If the {@code VoidResult} is an error
+     * @throws NullPointerException If the {@code VoidResult} is an error and the {@code exceptionSupplier} or its return is null
+     */
+    <X extends Throwable> void orElseThrow(Function<E, X> exceptionSupplier) throws X;
 }

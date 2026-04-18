@@ -497,4 +497,26 @@ class ResultTest {
 
         assertFalse(called.get());
     }
+
+    @Test
+    void orElseThrowOk() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = ok10.orElseThrow(e -> {
+            called.set(true);
+            return new RuntimeException("Error");
+        });
+
+        assertEquals(10L, mapped);
+        assertUnchangedOk(ok10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void orElseThrowErr() {
+        final var thrown = assertThrows(RuntimeException.class, () -> error10.orElseThrow(e -> new RuntimeException("Error: " + e)));
+
+        assertEquals("Error: 10", thrown.getMessage());
+        assertUnchangedErr(error10);
+    }
 }

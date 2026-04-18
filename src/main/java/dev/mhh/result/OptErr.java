@@ -111,6 +111,18 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
     }
 
     @Override
+    public <X extends Throwable> Optional<T> orElseThrow(Function<E, X> exceptionSupplier) throws X {
+        Objects.requireNonNull(exceptionSupplier);
+        throw Objects.requireNonNull(exceptionSupplier.apply(err));
+    }
+
+    @Override
+    public <X extends Throwable> T orElseThrow(Supplier<T> ifEmpty, Function<E, X> exceptionSupplier) throws X {
+        Objects.requireNonNull(exceptionSupplier);
+        throw Objects.requireNonNull(exceptionSupplier.apply(err));
+    }
+
+    @Override
     public Optional<E> error() {
         return Optional.of(err);
     }

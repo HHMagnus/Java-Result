@@ -118,6 +118,17 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     }
 
     @Override
+    public <X extends Throwable> Optional<T> orElseThrow(Function<E, X> exceptionSupplier) throws X {
+        return Optional.empty();
+    }
+
+    @Override
+    public <X extends Throwable> T orElseThrow(Supplier<T> ifEmpty, Function<E, X> exceptionSupplier) throws X {
+        Objects.requireNonNull(ifEmpty);
+        return Objects.requireNonNull(ifEmpty.get());
+    }
+
+    @Override
     public String toString() {
         return "Empty";
     }

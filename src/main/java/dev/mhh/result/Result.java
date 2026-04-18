@@ -4,6 +4,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * A result type that represents either a successful value or an error.
@@ -154,4 +155,15 @@ public sealed interface Result<T, E>
      * @throws NullPointerException if the filter is null and this is a present result.
      */
     OptionalResult<T, E> filter(Predicate<T> filter);
+
+    /**
+     * For an Ok {@code Result} it gives back the value.
+     * For an Err {@code Result} it will throw the exception provided by the {@code exceptionSupplier}
+     * @param exceptionSupplier Supplier of the exception to throw if {@code Result} is an error
+     * @return the value of the {@code Result}
+     * @param <X> Type of exception to throw if {@code Result} is an error
+     * @throws X If the {@code Result} is an error
+     * @throws NullPointerException If the {@code Result} is an error and the {@code exceptionSupplier} or its return is null
+     */
+    <X extends Throwable> T orElseThrow(Function<E, X> exceptionSupplier) throws X;
 }

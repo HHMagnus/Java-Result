@@ -166,4 +166,14 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
         final var voidResult = verifier.apply(value);
         return voidResult.toOptionalResult(value);
     }
+
+    @Override
+    public <X extends Throwable> Optional<T> orElseThrow(Function<E, X> exceptionSupplier) throws X {
+        return Optional.of(value);
+    }
+
+    @Override
+    public <X extends Throwable> T orElseThrow(Supplier<T> ifEmpty, Function<E, X> exceptionSupplier) throws X {
+        return value;
+    }
 }

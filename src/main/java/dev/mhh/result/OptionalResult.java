@@ -272,4 +272,29 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
      * @throws NullPointerException if the verifier is null and this is a present result.
      */
     OptionalResult<T, E> verifyValue(Function<T, VoidResult<E>> verifier);
+
+    /**
+     * For an Ok (Present or Empty) {@code OptionalResult} it gives back the optional value.
+     * For an Err {@code OptionalResult} it will throw the exception provided by the {@code exceptionSupplier}
+     * @param exceptionSupplier Supplier of the exception to throw if {@code OptionalResult} is an error
+     * @param <X> Type of exception to throw if {@code OptionalResult} is an error
+     * @return The present value if {@code OptionalResult} is Ok
+     * @throws X If the {@code OptionalResult} is an error
+     * @throws NullPointerException If the {@code OptionalResult} is an error and the supplier or its return is null
+     */
+    <X extends Throwable> Optional<T> orElseThrow(Function<E, X> exceptionSupplier) throws X;
+
+    /**
+     * For a Present {@code OptionalResult} it gives back the value.
+     * For an Empty {@code OptionalResult} it will return the value provided by the {@code ifEmpty} supplier.
+     * For an Err {@code OptionalResult} it will throw the exception provided by the supplier.
+     * @param ifEmpty Supplier of the value to return if {@code OptionalResult} is empty
+     * @param exceptionSupplier Supplier of the exception to throw if {@code OptionalResult} is an error
+     * @param <X> Type of exception to throw if {@code OptionalResult} is an error
+     * @return The present value if {@code OptionalResult} is Ok otherwise the value provided by the {@code ifEmpty} supplier
+     * @throws X If the {@code OptionalResult} is an error
+     * @throws NullPointerException If the {@code OptionalResult} is an error and the {@code exceptionSupplier} or its return is null
+     * @throws NullPointerException If the {@code OptionalResult} is empty and the {@code ifEmpty} or its return is null
+     */
+    <X extends Throwable> T orElseThrow(Supplier<T> ifEmpty, Function<E, X> exceptionSupplier) throws X;
 }

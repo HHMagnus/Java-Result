@@ -107,4 +107,10 @@ public record Err<T, E>(E err) implements Result<T, E>, Serializable {
     public OptionalResult<T, E> filter(Predicate<T> filter) {
         return OptionalResult.err(err);
     }
+
+    @Override
+    public <X extends Throwable> T orElseThrow(Function<E, X> exceptionSupplier) throws X {
+        Objects.requireNonNull(exceptionSupplier);
+        throw Objects.requireNonNull(exceptionSupplier.apply(err));
+    }
 }
