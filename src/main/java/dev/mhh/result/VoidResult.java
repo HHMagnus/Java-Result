@@ -76,6 +76,49 @@ public sealed interface VoidResult<E>
     }
 
     /**
+     * Creates a function that validates the input against a predicate, returning an ok {@code VoidResult} if true, otherwise an error {@code VoidResult} with the supplied {@code err}
+     *
+     * <p>To be used in the context of a verify:
+     * <pre> {@code Result.ok(10L)
+     *     .verify(validate(i -> i > 5, "i must be greater than 5"))
+     * }</pre>
+     *
+     * @param predicate the predicate to validate the input against
+     * @param err the error value if the predicate is false
+     * @return a function that validates the input against the predicate
+     * @param <T> the type of the input
+     * @param <E> the type of the error
+     */
+    static <T, E> Function<T, VoidResult<E>> validate(Predicate<T> predicate, E err) {
+        return value -> {
+            Objects.requireNonNull(predicate);
+            final var error = Objects.requireNonNull(err);
+            return okIf(predicate.test(value), error);
+        };
+    }
+
+    /**
+     * Creates a function that validates the input against a predicate, returning an ok {@code VoidResult} if true, otherwise an error {@code VoidResult} with the supplied {@code err}
+     *
+     * <p>To be used in the context of a verify:
+     * <pre> {@code Result.ok(10L)
+     *     .verify(validate(i -> i > 5, () -> "i must be greater than 5"))
+     * }</pre>
+     *
+     * @param predicate the predicate to validate the input against
+     * @param errSupplier the supplier of the error value if the predicate is false
+     * @return a function that validates the input against the predicate
+     * @param <T> the type of the input
+     * @param <E> the type of the error
+     */
+    static <T, E> Function<T, VoidResult<E>> validate(Predicate<T> predicate, Supplier<E> errSupplier) {
+        return value -> {
+            Objects.requireNonNull(predicate);
+            return okIf(predicate.test(value), errSupplier);
+        };
+    }
+
+    /**
      * Maps the error value to a different error type, leaving a successful result unchanged.
      *
      * @param function the mapping function applied to the error. Only called if this is an error result.
