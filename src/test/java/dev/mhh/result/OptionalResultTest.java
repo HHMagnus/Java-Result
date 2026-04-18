@@ -846,7 +846,7 @@ public class OptionalResultTest {
     @Test
     void verifyValueWhenErr() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = error10.verifyValue(x -> {
+        final var consumedResult = error10.verifyValue(_ -> {
             consumed.set(false);
             return VoidResult.ok();
         });
@@ -876,7 +876,7 @@ public class OptionalResultTest {
     @Test
     void filterWhenEmpty() {
         final var called = new AtomicBoolean(false);
-        final var mapped = okEmpty.filter(x -> {
+        final var mapped = okEmpty.filter(_ -> {
             called.set(true);
             return false;
         });
@@ -890,7 +890,7 @@ public class OptionalResultTest {
     @Test
     void filterWhenErr() {
         final var called = new AtomicBoolean(false);
-        final var mapped = error10.filter(x -> {
+        final var mapped = error10.filter(_ -> {
             called.set(true);
             return false;
         });
