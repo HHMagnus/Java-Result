@@ -458,4 +458,43 @@ class ResultTest {
 
         assertFalse(called.get());
     }
+
+    @Test
+    void filterTrueWhenOk() {
+        final var mapped = ok10.filter(x -> x == 10);
+
+        assertTrue(mapped.isOk());
+        assertEquals(Optional.of(10L), mapped.optionalValue());
+        assertEquals(Optional.empty(), mapped.error());
+
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void filterFalseWhenOk() {
+        final var mapped = ok10.filter(x -> x != 10);
+
+        assertTrue(mapped.isOk());
+        assertEquals(Optional.empty(), mapped.optionalValue());
+        assertEquals(Optional.empty(), mapped.error());
+
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void filterWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = error10.filter(x -> {
+            called.set(true);
+            return x == 10;
+        });
+
+        assertTrue(mapped.isError());
+        assertEquals(Optional.of(10L), mapped.error());
+        assertEquals(Optional.empty(), mapped.optionalValue());
+
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
 }

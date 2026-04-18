@@ -80,18 +80,19 @@ If any step produces an error, the rest of the chain short-circuits — the erro
 
 The API follows consistent naming patterns:
 
-| Prefix / name | Meaning |
-|---|---|
-| `map` | Transform the **value** to a new type |
-| `mapError` | Transform the **error** to a new type |
-| `flatMap` | Transform the value into a new result and flatten (merge) it |
-| `consume` | Run a side effect with the **value** (returns the same result) |
-| `consumeError` | Run a side effect with the **error** |
-| `run` | Run a `Runnable` depending on the result state |
-| `verify` | Validate the value with a function returning `VoidResult` |
-| `value` | Suffix on `OptionalResult` methods — only acts when a value is **present** |
-| `ok` / `err` | Factory methods for construction |
-| `toResult` / `toVoidResult` / `toOptionalResult` | Convert between result types |
+| Prefix / name                                    | Meaning                                                                    |
+|--------------------------------------------------|----------------------------------------------------------------------------|
+| `map`                                            | Transform the **value** to a new type                                      |
+| `mapError`                                       | Transform the **error** to a new type                                      |
+| `flatMap`                                        | Transform the value into a new result and flatten (merge) it               |
+| `consume`                                        | Run a side effect with the **value** (returns the same result)             |
+| `consumeError`                                   | Run a side effect with the **error**                                       |
+| `run`                                            | Run a `Runnable` depending on the result state                             |
+| `verify`                                         | Validate the value with a function returning `VoidResult`                  |
+| `value`                                          | Suffix on `OptionalResult` methods — only acts when a value is **present** |
+| `filter`                                         | Checks a `Predicate<T>` similar to `Optional.filter`                        |
+| `ok` / `err`                                     | Factory methods for construction                                           |
+| `toResult` / `toVoidResult` / `toOptionalResult` | Convert between result types                                               |
 
 ### `value` suffix on `OptionalResult`
 

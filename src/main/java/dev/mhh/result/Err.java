@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public record Err<T, E>(E err) implements Result<T, E>, Serializable {
     public Err {
@@ -99,6 +100,11 @@ public record Err<T, E>(E err) implements Result<T, E>, Serializable {
 
     @Override
     public <R> OptionalResult<R, E> flatMapWithOptionalResult(final Function<T, OptionalResult<R, E>> mapper) {
+        return OptionalResult.err(err);
+    }
+
+    @Override
+    public OptionalResult<T, E> filter(Predicate<T> filter) {
         return OptionalResult.err(err);
     }
 }

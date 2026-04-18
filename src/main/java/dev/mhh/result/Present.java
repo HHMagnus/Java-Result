@@ -106,10 +106,9 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
     @Override
     public OptionalResult<T, E> filter(final Predicate<T> filter) {
         Objects.requireNonNull(filter);
-        return Optional.of(value)
-                .filter(filter)
-                .map(OptionalResult::<T, E>ok)
-                .orElseGet(OptionalResult::empty);
+        final var optional = Optional.of(value)
+                .filter(filter);
+        return OptionalResult.okOptional(optional);
     }
 
     @Override

@@ -170,6 +170,7 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
 
     /**
      * Filters the present value, leaving empty and error states unchanged.
+     *
      * @param filter a predicate that returns true if the value should be kept, false otherwise.
      * @return this result if the filter function returns true, otherwise an empty result.
      * @throws NullPointerException if the filter is null and this is a present result.

@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
     @Override
@@ -106,5 +107,12 @@ public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
     public <R> OptionalResult<R, E> flatMapWithOptionalResult(final Function<T, OptionalResult<R, E>> mapper) {
         Objects.requireNonNull(mapper);
         return mapper.apply(value);
+    }
+
+    @Override
+    public OptionalResult<T, E> filter(Predicate<T> filter) {
+        Objects.requireNonNull(filter);
+        final var optional = Optional.of(value).filter(filter);
+        return OptionalResult.okOptional(optional);
     }
 }
