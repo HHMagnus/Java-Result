@@ -56,6 +56,16 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
     }
 
     @Override
+    public boolean isPresent() {
+        return true;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
     public <N> OptionalResult<T, N> mapError(Function<E, N> function) {
         return OptionalResult.ok(value);
     }

@@ -15,6 +15,16 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     }
 
     @Override
+    public boolean isPresent() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
     public <N> OptionalResult<T, N> mapError(Function<E, N> function) {
         return OptionalResult.empty();
     }

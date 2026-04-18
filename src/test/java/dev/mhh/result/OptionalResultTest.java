@@ -54,18 +54,28 @@ public class OptionalResultTest {
     void present() {
         final var present = OptionalResult.<Long, Long>ok(10L);
         assertUnchangedPresent(present);
+
+        assertTrue(present.isPresent());
+        assertFalse(present.isEmpty());
     }
 
     @Test
     void empty() {
         final var empty = OptionalResult.<Long, Long>empty();
         assertUnchangedEmpty(empty);
+
+        assertFalse(empty.isPresent());
+        assertTrue(empty.isEmpty());
     }
 
     @Test
     void err() {
         final var error = OptionalResult.<Long, Long>err(10L);
         assertUnchangedErr(error);
+
+
+        assertFalse(error.isPresent());
+        assertFalse(error.isEmpty());
     }
 
     @Test

@@ -100,6 +100,18 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
     }
 
     /**
+     * Returns true if this is a present result, false otherwise.
+     * @return true if this is a present result, false otherwise.
+     */
+    boolean isPresent();
+
+    /**
+     * Returns true if this is an empty result, false otherwise.
+     * @return true if this is an empty result, false otherwise.
+     */
+    boolean isEmpty();
+
+    /**
      * Maps the error value to a different error type, leaving present and empty states unchanged.
      *
      * @param function the mapping function applied to the error. Only called if this is an error result.
