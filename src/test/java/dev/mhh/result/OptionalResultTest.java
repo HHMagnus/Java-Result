@@ -81,6 +81,18 @@ public class OptionalResultTest {
     }
 
     @Test
+    void okNullableWhenNotNull() {
+        final var ok10 = OptionalResult.<Long, Long>okNullable(10L);
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void okNullableWhenNull() {
+        final var okNull = OptionalResult.<Long, Long>okNullable(null);
+        assertUnchangedEmpty(okNull);
+    }
+
+    @Test
     void toStringTest() {
         assertEquals("Present[10]", ok10.toString());
         assertEquals("Empty", okEmpty.toString());

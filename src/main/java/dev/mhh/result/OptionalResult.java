@@ -63,6 +63,19 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
     }
 
     /**
+     * Creates an {@code OptionalResult} from a value that can be null, producing a present result
+     * if the value is not null, or an empty result if it is null.
+     *
+     * @param value         the value that might be null
+     * @param <T>           the type of the value.
+     * @param <E>           the type of the error.
+     * @return a present {@code OptionalResult} if the value is not null, otherwise an empty {@code OptionalResult}.
+     */
+    static <T, E> OptionalResult<T, E> okNullable(T value) {
+        return okOptional(Optional.ofNullable(value));
+    }
+
+    /**
      * Creates an empty {@code OptionalResult}, representing a successful result with no value.
      *
      * @param <T> the type of the value.
