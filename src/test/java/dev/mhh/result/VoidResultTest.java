@@ -304,7 +304,7 @@ class VoidResultTest {
 
     @Test
     void okIfWhenTrue() {
-        final var ok = VoidResult.okIf(true, 10L);
+        final var ok = VoidResult.okIf(true, 250L);
         assertUnchangedOk(ok);
     }
 
@@ -312,5 +312,27 @@ class VoidResultTest {
     void okIfWhenFalse() {
         final var ok = VoidResult.okIf(false, 10L);
         assertUnchangedErr(ok);
+    }
+
+    @Test
+    void okIfSupplierWhenTrue() {
+        final var called = new AtomicBoolean(false);
+        final var ok = VoidResult.okIf(true, () -> {
+            called.set(true);
+            return 10L;
+        });
+        assertUnchangedOk(ok);
+        assertFalse(called.get());
+    }
+
+    @Test
+    void okIfSupplierWhenFalse() {
+        final var called = new AtomicBoolean(false);
+        final var error = VoidResult.okIf(false, () -> {
+            called.set(true);
+            return 10L;
+        });
+        assertUnchangedErr(error);
+        assertTrue(called.get());
     }
 }
