@@ -86,6 +86,11 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
     }
 
     @Override
+    public OptionalResult<T, E> or(Supplier<Optional<T>> supplier) {
+        return this;
+    }
+
+    @Override
     public <R> OptionalResult<R, E> mapValue(final Function<T, R> mapper) {
         return OptionalResult.err(err);
     }

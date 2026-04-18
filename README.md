@@ -105,3 +105,14 @@ optionalResult.map(optional -> optional.map(String::toUpperCase));
 // Only runs when a value is present — empty passes through unchanged
 optionalResult.mapValue(String::toUpperCase);
 ```
+
+## `Optional`-like behaviour
+
+The `Result` types aims to be like `Optional`, but there are differences to ensure proper error handling:
+- The `ifPresent` naming pattern did not fit well, so it has been renamed to `consume`.
+  - Furthermore, there is no `ifPresentOrElse` method as those can be presented by an `consume` followed by `consumeError`.
+- There are no `get`, `orElse` or `orElseThrow` (without exception) methods as these will throw away the error without proper handling.
+  - Instead, use either `orElseThrow` with a given `exceptionSupplier` or switch over the values.
+- The `of` is called `ok` to be more expressive of an error also technically being an `of`.
+- There is no `stream` method as it would also throw away the error without proper handling.
+- `or` is only supported for `OptionalResult` and not `Result` as it would throw away the error without proper handling.

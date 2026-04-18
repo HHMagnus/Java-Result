@@ -134,6 +134,11 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
     }
 
     @Override
+    public OptionalResult<T, E> or(Supplier<Optional<T>> supplier) {
+        return this;
+    }
+
+    @Override
     public <R> OptionalResult<R, E> mapValue(final Function<T, R> mapper) {
         Objects.requireNonNull(mapper);
         final var mappedValue = mapper.apply(value);

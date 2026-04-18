@@ -219,6 +219,13 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
     OptionalResult<T, E> filter(Predicate<T> filter);
 
     /**
+     * Replaces the empty value with the result of the given supplier. Nothing otherwise changes.
+     * @param supplier the supplier of the new value.
+     * @return if this is an empty result, the result of the supplier, otherwise this result.
+     */
+    OptionalResult<T, E> or(Supplier<Optional<T>> supplier);
+
+    /**
      * Maps the present value to a new value, leaving empty and error states unchanged.
      * Unlike {@link #map}, this only operates when a value is actually present.
      *

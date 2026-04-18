@@ -93,6 +93,13 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     }
 
     @Override
+    public OptionalResult<T, E> or(Supplier<Optional<T>> supplier) {
+        Objects.requireNonNull(supplier);
+        final var optional = Objects.requireNonNull(supplier.get());
+        return OptionalResult.okOptional(optional);
+    }
+
+    @Override
     public <R> OptionalResult<R, E> mapValue(final Function<T, R> mapper) {
         return OptionalResult.empty();
     }

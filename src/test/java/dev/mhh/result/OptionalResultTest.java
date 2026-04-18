@@ -1062,4 +1062,46 @@ public class OptionalResultTest {
         assertFalse(ifEmptyCalled.get());
         assertTrue(exceptionSupplierCalled.get());
     }
+
+    @Test
+    void orWhenPresent() {
+        final var called = new AtomicBoolean(false);
+        final var result = ok10.or(() -> {
+            called.set(true);
+            return Optional.of(250L);
+        });
+
+        assertUnchangedPresent(ok10);
+        assertUnchangedPresent(result);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void orWhenEmpty() {
+        final var called = new AtomicBoolean(false);
+        final var result = okEmpty.or(() -> {
+            called.set(true);
+            return Optional.of(10L);
+        });
+
+        assertUnchangedPresent(result);
+        assertUnchangedEmpty(okEmpty);
+
+        assertTrue(called.get());
+    }
+
+    @Test
+    void orWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var result = error10.or(() -> {
+            called.set(true);
+            return Optional.of(250L);
+        });
+
+        assertUnchangedErr(result);
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
 }
