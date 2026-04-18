@@ -95,20 +95,20 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
     @Override
     public <R> OptionalResult<R, E> map(Function<Optional<T>, Optional<R>> mapper) {
         Objects.requireNonNull(mapper);
-        final var optional = mapper.apply(Optional.of(value));
+        final var optional = Objects.requireNonNull(mapper.apply(Optional.of(value)));
         return OptionalResult.okOptional(optional);
     }
 
     @Override
     public <R> OptionalResult<R, E> flatMap(Function<Optional<T>, OptionalResult<R, E>> mapper) {
         Objects.requireNonNull(mapper);
-        return mapper.apply(Optional.of(value));
+        return Objects.requireNonNull(mapper.apply(Optional.of(value)));
     }
 
     @Override
     public <R> Result<R, E> flatMapWithResult(final Function<Optional<T>, Result<R, E>> mapper) {
         Objects.requireNonNull(mapper);
-        return mapper.apply(Optional.of(value));
+        return Objects.requireNonNull(mapper.apply(Optional.of(value)));
     }
 
     @Override
@@ -121,7 +121,7 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
     @Override
     public OptionalResult<T, E> verify(final Function<Optional<T>, VoidResult<E>> verifier) {
         Objects.requireNonNull(verifier);
-        final var voidResult = verifier.apply(Optional.of(value));
+        final var voidResult = Objects.requireNonNull(verifier.apply(Optional.of(value)));
         return voidResult.toOptionalResult(value);
     }
 
@@ -141,21 +141,21 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
     @Override
     public <R> OptionalResult<R, E> mapValue(final Function<T, R> mapper) {
         Objects.requireNonNull(mapper);
-        final var mappedValue = mapper.apply(value);
+        final var mappedValue = Objects.requireNonNull(mapper.apply(value));
         return OptionalResult.ok(mappedValue);
     }
 
     @Override
     public <R> OptionalResult<R, E> mapValueToOptional(final Function<T, Optional<R>> mapper) {
         Objects.requireNonNull(mapper);
-        final var optional = mapper.apply(value);
+        final var optional = Objects.requireNonNull(mapper.apply(value));
         return OptionalResult.okOptional(optional);
     }
 
     @Override
     public <R> OptionalResult<R, E> flatMapValue(final Function<T, OptionalResult<R, E>> mapper) {
         Objects.requireNonNull(mapper);
-        return mapper.apply(value);
+        return Objects.requireNonNull(mapper.apply(value));
     }
 
     @Override
@@ -168,7 +168,7 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
     @Override
     public OptionalResult<T, E> verifyValue(final Function<T, VoidResult<E>> verifier) {
         Objects.requireNonNull(verifier);
-        final var voidResult = verifier.apply(value);
+        final var voidResult = Objects.requireNonNull(verifier.apply(value));
         return voidResult.toOptionalResult(value);
     }
 

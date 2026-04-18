@@ -20,7 +20,7 @@ public record Err<T, E>(E err) implements Result<T, E>, Serializable {
     @Override
     public <N> Result<T, N> mapError(Function<E, N> mapper) {
         Objects.requireNonNull(mapper);
-        final var error = mapper.apply(err);
+        final var error = Objects.requireNonNull(mapper.apply(err));
         return Result.err(error);
     }
 
