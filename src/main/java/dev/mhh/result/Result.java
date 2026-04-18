@@ -105,6 +105,28 @@ public sealed interface Result<T, E>
     Result<T, E> verify(Function<T, VoidResult<E>> verifier);
 
     /**
+     * Verifies the success value using the given predicate.
+     * If verification fails, the returned error replaces this result.
+     * If this is an error result, the predicate is not called.
+     *
+     * @param predicate the predicate to test the value.
+     * @param errorSupplier the supplier of the error to return if the predicate fails.
+     * @return this result if verification passes, or an error result if verification fails.
+     */
+    Result<T, E> verify(Predicate<T> predicate, Supplier<E> errorSupplier);
+
+    /**
+     * Verifies the success value using the given predicate.
+     * If verification fails, the returned error replaces this result.
+     * If this is an error result, the predicate is not called.
+     *
+     * @param predicate the predicate to test the value.
+     * @param error the error to return if the predicate fails.
+     * @return this result if verification passes, or an error result if verification fails.
+     */
+    Result<T, E> verify(Predicate<T> predicate, E error);
+
+    /**
      * Converts this {@code Result} to a {@link VoidResult}, discarding the success value.
      * An ok result becomes {@link VoidResult#ok()}, and an error result remains an error.
      *

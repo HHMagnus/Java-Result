@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public record Err<T, E>(E err) implements Result<T, E>, Serializable {
     public Err {
@@ -80,6 +81,16 @@ public record Err<T, E>(E err) implements Result<T, E>, Serializable {
 
     @Override
     public Result<T, E> verify(Function<T, VoidResult<E>> verifier) {
+        return this;
+    }
+
+    @Override
+    public Result<T, E> verify(Predicate<T> predicate, Supplier<E> errorSupplier) {
+        return this;
+    }
+
+    @Override
+    public Result<T, E> verify(Predicate<T> predicate, E error) {
         return this;
     }
 

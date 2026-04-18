@@ -519,4 +519,82 @@ class ResultTest {
         assertEquals("Error: 10", thrown.getMessage());
         assertUnchangedErr(error10);
     }
+
+    @Test
+    void verifyPredicateTrueWhenOk() {
+        final var result = ok10.verify(x -> x == 10, 250L);
+
+        assertUnchangedOk(result);
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void verifyPredicateFalseWhenOk() {
+        final var result = ok10.verify(x -> x != 10, 10L);
+
+        assertUnchangedErr(result);
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void verifyPredicateWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var result = error10.verify(x -> {
+            called.set(true);
+            return x == 10;
+        }, 250L);
+
+        assertUnchangedErr(result);
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void verifyPredicateErrSupplierTrueWhenOk() {
+        final var called = new AtomicBoolean(false);
+        final var result = ok10.verify(x -> x == 10, () -> {
+            called.set(true);
+            return 250L;
+        });
+
+        assertUnchangedOk(result);
+        assertUnchangedOk(ok10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void verifyPredicateErrSupplierFalseWhenOk() {
+        final var called = new AtomicBoolean(false);
+        final var result = ok10.verify(x -> x != 10, () -> {
+            called.set(true);
+            return 10L;
+        });
+
+        assertUnchangedErr(result);
+        assertUnchangedOk(ok10);
+
+        assertTrue(called.get());
+    }
+
+    @Test
+    void verifyPredicateErrSupplierWhenErr() {
+        final var predicateCalled = new AtomicBoolean(false);
+        final var errSupplierCalled = new AtomicBoolean(false);
+        final var result = error10.verify(x -> {
+            predicateCalled.set(true);
+            return x == 10;
+        }, () -> {
+            errSupplierCalled.set(true);
+            return 250L;
+        });
+
+        assertUnchangedErr(result);
+        assertUnchangedErr(error10);
+
+        assertFalse(predicateCalled.get());
+        assertFalse(errSupplierCalled.get());
+    }
+
 }

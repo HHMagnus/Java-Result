@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
     @Override
@@ -84,6 +85,16 @@ public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
         Objects.requireNonNull(verifier);
         final var voidResult = Objects.requireNonNull(verifier.apply(value));
         return voidResult.toResult(value);
+    }
+
+    @Override
+    public Result<T, E> verify(Predicate<T> predicate, Supplier<E> errorSupplier) {
+        return verify(VoidResult.validate(predicate, errorSupplier));
+    }
+
+    @Override
+    public Result<T, E> verify(Predicate<T> predicate, E error) {
+        return verify(VoidResult.validate(predicate, error));
     }
 
     @Override
