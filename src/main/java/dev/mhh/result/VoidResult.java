@@ -1,6 +1,8 @@
 package dev.mhh.result;
 
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -37,6 +39,21 @@ public sealed interface VoidResult<E>
      */
     static <E> VoidResult<E> err(E err) {
         return new VoidErr<>(err);
+    }
+
+    /**
+     * Creates an ok {@code VoidResult} if the given condition is true, otherwise an error {@code VoidResult} with the given {@code err}
+     *
+     * @param condition true = ok, false = error
+     * @param err the error value if {@code condition} is false
+     * @return ok {@code VoidResult} if condition is true, otherwise an error {@code VoidResult} with the given {@code err}
+     * @param <E> the type of the error
+     */
+    static <E> VoidResult<E> okIf(boolean condition, E err) {
+        return Optional.of(condition)
+                .filter(Predicate.isEqual(true))
+                .map(_ -> VoidResult.<E>ok())
+                .orElseGet(() -> VoidResult.err(err));
     }
 
     /**

@@ -301,4 +301,16 @@ class VoidResultTest {
         assertEquals("Error: 10", thrown.getMessage());
         assertUnchangedErr(error10);
     }
+
+    @Test
+    void okIfWhenTrue() {
+        final var ok = VoidResult.okIf(true, 10L);
+        assertUnchangedOk(ok);
+    }
+
+    @Test
+    void okIfWhenFalse() {
+        final var ok = VoidResult.okIf(false, 10L);
+        assertUnchangedErr(ok);
+    }
 }
