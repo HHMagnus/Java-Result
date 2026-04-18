@@ -1104,4 +1104,125 @@ public class OptionalResultTest {
 
         assertFalse(called.get());
     }
+
+    @Test
+    void verifyPredicateTrueWhenPresent() {
+        final var result = ok10.verify(x -> Optional.of(10L).equals(x), 250L);
+
+        assertUnchangedPresent(result);
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void verifyPredicateFalseWhenPresent() {
+        final var result = ok10.verify(x -> Optional.of(250L).equals(x), 10L);
+
+        assertUnchangedErr(result);
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void verifyPredicateTrueWhenEmpty() {
+        final var result = okEmpty.verify(x -> Optional.empty().equals(x), 250L);
+
+        assertUnchangedEmpty(result);
+        assertUnchangedEmpty(okEmpty);
+    }
+
+    @Test
+    void verifyPredicateFalseWhenEmpty() {
+        final var result = okEmpty.verify(x -> Optional.of(250L).equals(x), 10L);
+
+        assertUnchangedErr(result);
+        assertUnchangedEmpty(okEmpty);
+    }
+
+    @Test
+    void verifyPredicateWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var result = error10.verify(x -> {
+            called.set(true);
+            return Optional.of(10L).equals(x);
+        }, 250L);
+
+        assertUnchangedErr(result);
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void verifyPredicateTrueErrSupplierWhenPresent() {
+        final var errSupplierCalled = new AtomicBoolean(false);
+        final var result = ok10.verify(x -> Optional.of(10L).equals(x), () -> {
+            errSupplierCalled.set(true);
+            return 250L;
+        });
+
+        assertUnchangedPresent(result);
+        assertUnchangedPresent(ok10);
+
+        assertFalse(errSupplierCalled.get());
+    }
+
+    @Test
+    void verifyPredicateFalseErrSupplierWhenPresent() {
+        final var errSupplierCalled = new AtomicBoolean(false);
+        final var result = ok10.verify(x -> Optional.of(250L).equals(x), () -> {
+            errSupplierCalled.set(true);
+            return 10L;
+        });
+
+        assertUnchangedErr(result);
+        assertUnchangedPresent(ok10);
+
+        assertTrue(errSupplierCalled.get());
+    }
+
+    @Test
+    void verifyPredicateTrueErrSupplierWhenEmpty() {
+        final var errSupplierCalled = new AtomicBoolean(false);
+        final var result = okEmpty.verify(x -> Optional.empty().equals(x), () -> {
+            errSupplierCalled.set(true);
+            return 250L;
+        });
+
+        assertUnchangedEmpty(result);
+        assertUnchangedEmpty(okEmpty);
+
+        assertFalse(errSupplierCalled.get());
+    }
+
+    @Test
+    void verifyPredicateFalseErrSupplierWhenEmpty() {
+        final var errSupplierCalled = new AtomicBoolean(false);
+        final var result = okEmpty.verify(x -> Optional.of(250L).equals(x), () -> {
+            errSupplierCalled.set(true);
+            return 10L;
+        });
+
+        assertUnchangedErr(result);
+        assertUnchangedEmpty(okEmpty);
+
+        assertTrue(errSupplierCalled.get());
+    }
+
+    @Test
+    void verifyPredicateErrSupplierWhenErr() {
+        final var predicateCalled = new AtomicBoolean(false);
+        final var errSupplierCalled = new AtomicBoolean(false);
+        final var result = error10.verify(x -> {
+            predicateCalled.set(true);
+            return Optional.of(250L).equals(x);
+        }, () -> {
+            errSupplierCalled.set(true);
+            return 10L;
+        });
+
+        assertUnchangedErr(result);
+        assertUnchangedErr(error10);
+
+        assertFalse(predicateCalled.get());
+        assertFalse(errSupplierCalled.get());
+    }
 }

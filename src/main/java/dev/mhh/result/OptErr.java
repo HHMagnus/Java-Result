@@ -81,6 +81,16 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
     }
 
     @Override
+    public OptionalResult<T, E> verify(Predicate<Optional<T>> predicate, E error) {
+        return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> verify(Predicate<Optional<T>> predicate, Supplier<E> errorSupplier) {
+        return this;
+    }
+
+    @Override
     public OptionalResult<T, E> filter(final Predicate<T> filter) {
         return this;
     }

@@ -87,6 +87,16 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     }
 
     @Override
+    public OptionalResult<T, E> verify(Predicate<Optional<T>> predicate, E error) {
+        return verify(VoidResult.validate(predicate, error));
+    }
+
+    @Override
+    public OptionalResult<T, E> verify(Predicate<Optional<T>> predicate, Supplier<E> errorSupplier) {
+        return verify(VoidResult.validate(predicate, errorSupplier));
+    }
+
+    @Override
     public OptionalResult<T, E> filter(final Predicate<T> filter) {
         return this;
     }
