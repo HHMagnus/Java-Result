@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
@@ -62,6 +63,11 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
         Objects.requireNonNull(verifier);
         final var voidResult = verifier.apply(Optional.empty());
         return voidResult.toOptionalResult();
+    }
+
+    @Override
+    public OptionalResult<T, E> filter(final Predicate<T> filter) {
+        return this;
     }
 
     @Override

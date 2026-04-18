@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable {
@@ -57,6 +58,11 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
     @Override
     public OptionalResult<T, E> verify(final Function<Optional<T>, VoidResult<E>> verifier) {
         return OptionalResult.err(err);
+    }
+
+    @Override
+    public OptionalResult<T, E> filter(final Predicate<T> filter) {
+        return this;
     }
 
     @Override

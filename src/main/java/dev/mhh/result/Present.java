@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializable {
@@ -100,6 +101,15 @@ public record Present<T, E>(T value) implements OptionalResult<T, E>, Serializab
         Objects.requireNonNull(verifier);
         final var voidResult = verifier.apply(Optional.of(value));
         return voidResult.toOptionalResult(value);
+    }
+
+    @Override
+    public OptionalResult<T, E> filter(final Predicate<T> filter) {
+        Objects.requireNonNull(filter);
+        return Optional.of(value)
+                .filter(filter)
+                .map(OptionalResult::<T, E>ok)
+                .orElseGet(OptionalResult::empty);
     }
 
     @Override

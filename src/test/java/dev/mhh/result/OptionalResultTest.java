@@ -835,4 +835,48 @@ public class OptionalResultTest {
 
         assertFalse(consumed.get());
     }
+
+    @Test
+    void filterTrueWhenPresent() {
+        final var mapped = ok10.filter(x -> x == 10);
+
+        assertUnchangedPresent(mapped);
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void filterFalseWhenPresent() {
+        final var mapped = ok10.filter(x -> x != 10);
+
+        assertUnchangedEmpty(mapped);
+        assertUnchangedPresent(ok10);
+    }
+
+    @Test
+    void filterWhenEmpty() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = okEmpty.filter(x -> {
+            called.set(true);
+            return false;
+        });
+
+        assertUnchangedEmpty(mapped);
+        assertUnchangedEmpty(okEmpty);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void filterWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = error10.filter(x -> {
+            called.set(true);
+            return false;
+        });
+
+        assertUnchangedErr(mapped);
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
 }

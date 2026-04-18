@@ -3,6 +3,7 @@ package dev.mhh.result;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -166,6 +167,14 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
      * @throws NullPointerException if the verifier is null and this is not an error result.
      */
     OptionalResult<T, E> verify(Function<Optional<T>, VoidResult<E>> verifier);
+
+    /**
+     * Filters the present value, leaving empty and error states unchanged.
+     * @param filter a predicate that returns true if the value should be kept, false otherwise.
+     * @return this result if the filter function returns true, otherwise an empty result.
+     * @throws NullPointerException if the filter is null and this is a present result.
+     */
+    OptionalResult<T, E> filter(Predicate<T> filter);
 
     /**
      * Maps the present value to a new value, leaving empty and error states unchanged.
