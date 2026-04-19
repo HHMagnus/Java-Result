@@ -53,7 +53,7 @@ public sealed interface VoidResult<E>
     static <E> VoidResult<E> okIf(boolean condition, E err) {
         return Optional.of(condition)
                 .filter(Predicate.isEqual(true))
-                .map(_ -> VoidResult.<E>ok())
+                .map(_x -> VoidResult.<E>ok())
                 .orElseGet(() -> VoidResult.err(err));
     }
 
@@ -68,7 +68,7 @@ public sealed interface VoidResult<E>
     static <E> VoidResult<E> okIf(boolean condition, Supplier<E> errSupplier) {
         return Optional.of(condition)
                 .filter(Predicate.isEqual(true))
-                .map(_ -> VoidResult.<E>ok())
+                .map(_x -> VoidResult.<E>ok())
                 .orElseGet(() -> {
                     final var err = Objects.requireNonNull(errSupplier.get());
                     return VoidResult.err(err);

@@ -145,7 +145,7 @@ class ResultTest {
     @Test
     void consumeWhenOk() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = ok10.consume(_ -> consumed.set(true));
+        final var consumedResult = ok10.consume(_x ->consumed.set(true));
 
         assertUnchangedOk(consumedResult);
         assertUnchangedOk(ok10);
@@ -156,7 +156,7 @@ class ResultTest {
     @Test
     void consumeWhenErr() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = error10.consume(_ -> consumed.set(true));
+        final var consumedResult = error10.consume(_x ->consumed.set(true));
 
         assertUnchangedErr(consumedResult);
         assertUnchangedErr(error10);
@@ -181,7 +181,7 @@ class ResultTest {
     @Test
     void verifyWhenError() {
         final var consumed = new AtomicBoolean(false);
-        final var error20 = error10.verify(_ -> {
+        final var error20 = error10.verify(_x ->{
             consumed.set(true);
             return VoidResult.ok();
         });
@@ -212,7 +212,7 @@ class ResultTest {
     @Test
     void verifyErrWhenError() {
         final var consumed = new AtomicBoolean(false);
-        final var error10Still = error10.verify(_ -> {
+        final var error10Still = error10.verify(_x ->{
             consumed.set(true);
             return VoidResult.err(250L);
         });
@@ -289,7 +289,7 @@ class ResultTest {
     @Test
     void consumeErrorWhenOk() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = ok10.consumeError(_ -> consumed.set(true));
+        final var consumedResult = ok10.consumeError(_x ->consumed.set(true));
 
         assertUnchangedOk(consumedResult);
         assertUnchangedOk(ok10);
@@ -365,7 +365,7 @@ class ResultTest {
     @Test
     void mapToOptionalEmptyWhenErr() {
         final var called = new AtomicBoolean(false);
-        final var mappedResult = error10.mapToOptional(_ -> {
+        final var mappedResult = error10.mapToOptional(_x ->{
             called.set(true);
             return Optional.empty();
         });

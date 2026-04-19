@@ -183,7 +183,7 @@ public class OptionalResultTest {
     @Test
     void consumeErrorWhenPresent() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = ok10.consumeError(_ -> consumed.set(true));
+        final var consumedResult = ok10.consumeError(_x -> consumed.set(true));
 
         assertUnchangedPresent(consumedResult);
         assertUnchangedPresent(ok10);
@@ -194,7 +194,7 @@ public class OptionalResultTest {
     @Test
     void consumeErrorWhenEmpty() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = okEmpty.consumeError(_ -> consumed.set(true));
+        final var consumedResult = okEmpty.consumeError(_x -> consumed.set(true));
 
         assertUnchangedEmpty(consumedResult);
         assertUnchangedEmpty(okEmpty);
@@ -205,7 +205,7 @@ public class OptionalResultTest {
     @Test
     void consumeErrorWhenErr() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = error10.consumeError(_ -> consumed.set(true));
+        final var consumedResult = error10.consumeError(_x ->consumed.set(true));
 
         assertUnchangedErr(consumedResult);
         assertUnchangedErr(error10);
@@ -335,7 +335,7 @@ public class OptionalResultTest {
 
     @Test
     void mapToPresentWhenEmpty() {
-        final var mappedResult = okEmpty.map(x -> Optional.of(x.map(_ -> 250L).orElse(10L)));
+        final var mappedResult = okEmpty.map(x -> Optional.of(x.map(_x ->250L).orElse(10L)));
 
         assertUnchangedPresent(mappedResult);
         assertUnchangedEmpty(okEmpty);
@@ -443,7 +443,7 @@ public class OptionalResultTest {
     @Test
     void flatMapToEmptyWhenErr() {
         final var called = new AtomicBoolean(false);
-        final var mappedResult = error10.flatMap(_ -> {
+        final var mappedResult = error10.flatMap(_x ->{
             called.set(true);
             return OptionalResult.<Long, Long>empty();
         });
@@ -554,7 +554,7 @@ public class OptionalResultTest {
     @Test
     void consumeWhenErr() {
         final var called = new AtomicBoolean(false);
-        final var consumedResult = error10.consume(_ -> called.set(true));
+        final var consumedResult = error10.consume(_x ->called.set(true));
 
         assertUnchangedErr(consumedResult);
         assertUnchangedErr(error10);
@@ -610,7 +610,7 @@ public class OptionalResultTest {
     void verifyWhenErr() {
         final var called = new AtomicBoolean(false);
 
-        final var mapped = error10.verify(_ -> {
+        final var mapped = error10.verify(_x ->{
             called.set(true);
             return VoidResult.ok();
         });
@@ -782,7 +782,7 @@ public class OptionalResultTest {
     @Test
     void consumeValueWhenEmpty() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = okEmpty.consumeValue(_ -> consumed.set(false));
+        final var consumedResult = okEmpty.consumeValue(_x ->consumed.set(false));
 
         assertUnchangedEmpty(consumedResult);
         assertUnchangedEmpty(okEmpty);
@@ -793,7 +793,7 @@ public class OptionalResultTest {
     @Test
     void consumeValueWhenErr() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = error10.consumeValue(_ -> consumed.set(false));
+        final var consumedResult = error10.consumeValue(_x ->consumed.set(false));
 
         assertUnchangedErr(consumedResult);
         assertUnchangedErr(error10);
@@ -846,7 +846,7 @@ public class OptionalResultTest {
     @Test
     void verifyValueWhenErr() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = error10.verifyValue(_ -> {
+        final var consumedResult = error10.verifyValue(_x ->{
             consumed.set(false);
             return VoidResult.ok();
         });
@@ -876,7 +876,7 @@ public class OptionalResultTest {
     @Test
     void filterWhenEmpty() {
         final var called = new AtomicBoolean(false);
-        final var mapped = okEmpty.filter(_ -> {
+        final var mapped = okEmpty.filter(_x ->{
             called.set(true);
             return false;
         });
@@ -890,7 +890,7 @@ public class OptionalResultTest {
     @Test
     void filterWhenErr() {
         final var called = new AtomicBoolean(false);
-        final var mapped = error10.filter(_ -> {
+        final var mapped = error10.filter(_x ->{
             called.set(true);
             return false;
         });
@@ -970,7 +970,7 @@ public class OptionalResultTest {
     @Test
     void orElseThrowWhenPresent() {
         final var called = new AtomicBoolean(false);
-        final var result = ok10.orElseThrow(_ -> {
+        final var result = ok10.orElseThrow(_x ->{
             called.set(true);
             return new RuntimeException("Error");
         });
@@ -984,7 +984,7 @@ public class OptionalResultTest {
     @Test
     void orElseThrowWhenEmpty() {
         final var called = new AtomicBoolean(false);
-        final var result = okEmpty.orElseThrow(_ -> {
+        final var result = okEmpty.orElseThrow(_x ->{
             called.set(true);
             return new RuntimeException("Error");
         });

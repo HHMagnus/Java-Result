@@ -131,7 +131,7 @@ class VoidResultTest {
     @Test
     void consumeErrorWhenOk() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = ok.consumeError(_ -> consumed.set(true));
+        final var consumedResult = ok.consumeError(_x ->consumed.set(true));
 
         assertUnchangedOk(consumedResult);
         assertUnchangedOk(ok);
@@ -284,7 +284,7 @@ class VoidResultTest {
     @Test
     void orElseThrowWhenOk() {
         final var called = new AtomicBoolean(false);
-        ok.orElseThrow(_ -> {
+        ok.orElseThrow(_x ->{
             called.set(true);
             return new RuntimeException("Error");
         });
