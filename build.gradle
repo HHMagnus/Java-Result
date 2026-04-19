@@ -27,7 +27,7 @@ publishing {
 
             groupId = 'dev.mhh'
             artifactId = 'result'
-            version = System.getenv("VERSION") ?: '0.1.0-SNAPSHOT'
+            version = (System.getenv("VERSION") ?: "0.0.1-SNAPSHOT").replaceAll(/^v/, "")
         }
     }
 
