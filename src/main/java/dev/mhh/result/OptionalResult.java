@@ -83,7 +83,7 @@ public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
      * @return an empty {@code OptionalResult}.
      */
     static <T, E> OptionalResult<T, E> empty() {
-        return new Empty<>();
+        return Empty.empty();
     }
 
     /**

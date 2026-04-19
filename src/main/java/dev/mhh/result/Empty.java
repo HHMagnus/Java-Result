@@ -9,6 +9,13 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
+    private static final Empty<?, ?> EMPTY = new Empty<>();
+
+    @SuppressWarnings("unchecked")
+    static <T, E> Empty<T, E> empty() {
+        return (Empty<T, E>) EMPTY;
+    }
+
     @Override
     public Optional<T> optionalValue() {
         return Optional.empty();
