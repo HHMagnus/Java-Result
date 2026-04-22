@@ -27,6 +27,11 @@ A type-safe Result library for Java, inspired by Rust's `Result<T, E>`. Instead 
 
 ## Quick start
 
+Import into a gradle project using:
+```groovy
+implementation 'dev.mhh:result:1.0.0'
+```
+
 Instead of throwing an exception, return a `Result`:
 
 ```java
