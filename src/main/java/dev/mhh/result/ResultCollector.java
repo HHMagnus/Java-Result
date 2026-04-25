@@ -35,7 +35,7 @@ import java.util.stream.Collector;
  * @param <T> the type of success values
  * @param <E> the type of error values
  */
-public final class ResultCollector<T, E> implements Collector<Result<T, E>, ResultCollector<T, E>, Result<List<T>, List<E>>>{
+public final class ResultCollector<T, E> implements Collector<ResultWithValue<T, E>, ResultCollector<T, E>, Result<List<T>, List<E>>>{
     public List<T> ok = new ArrayList<>();
     public List<E> err = new ArrayList<>();
 
@@ -55,7 +55,7 @@ public final class ResultCollector<T, E> implements Collector<Result<T, E>, Resu
      * @param <E> the type of error values
      * @return a collector over {@code Result<T, E>} elements
      */
-    public static <T, E> Collector<Result<T, E>, ResultCollector<T, E>, Result<List<T>, List<E>>> collector() {
+    public static <T, E> Collector<ResultWithValue<T, E>, ResultCollector<T, E>, Result<List<T>, List<E>>> collector() {
         return new ResultCollector<>();
     }
 
@@ -65,11 +65,10 @@ public final class ResultCollector<T, E> implements Collector<Result<T, E>, Resu
     }
 
     @Override
-    public BiConsumer<ResultCollector<T, E>, Result<T, E>> accumulator() {
+    public BiConsumer<ResultCollector<T, E>, ResultWithValue<T, E>> accumulator() {
         return (collector, result) -> {
-            result
-                    .consume(value -> collector.ok.add(value))
-                    .consumeError(error -> collector.err.add(error));
+            result.consume(value -> collector.ok.add(value));
+            result.consumeError(error -> collector.err.add(error));
         };
     }
 

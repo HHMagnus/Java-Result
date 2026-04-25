@@ -19,7 +19,7 @@ import java.util.function.Supplier;
  * @param <E> the type of the error.
  */
 public sealed interface Result<T, E>
-        extends Shared<E, Result<T, E>>
+        extends Shared<E, Result<T, E>>, ResultWithValue<T, E>
         permits Err, Ok {
 
     /**

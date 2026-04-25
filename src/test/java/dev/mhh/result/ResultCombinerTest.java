@@ -137,4 +137,35 @@ public class ResultCombinerTest {
         assertTrue(result.isOk());
         assertEquals(3203L, result.optionalValue().get());
     }
+
+    @Test
+    void combineWithOptionalToo() {
+        final var result = ResultCombiner.combine(
+                (t1, t2, t3, t4, t5, t6, t7, T8) -> t1 + t2.orElseThrow() + t3 + t4 + t5 + t6 + t7 + T8.orElse(289L),
+                Result.ok(123L),
+                OptionalResult.ok(321L),
+                Result.ok(111L),
+                Result.ok(523L),
+                Result.ok(963L),
+                Result.ok(261L),
+                Result.ok(612L),
+                OptionalResult.<Long, Object>empty()
+        );
+
+        assertTrue(result.isOk());
+        assertEquals(3203L, result.optionalValue().get());
+    }
+
+    @Test
+    void testCombineOptionalResultFailedList() {
+        final var result = ResultCombiner.combine(
+                (t1, t2, t3) -> t1 + t2.orElseThrow() + t3,
+                Result.ok(123L),
+                OptionalResult.<Long, String>err("test123"),
+                Result.<Long, String>err("123test")
+        );
+
+        assertTrue(result.isError());
+        assertEquals(List.of("test123", "123test"), result.error().orElseThrow());
+    }
 }

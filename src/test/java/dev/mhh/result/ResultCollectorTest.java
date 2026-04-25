@@ -117,7 +117,34 @@ class ResultCollectorTest {
     }
 
     @Test
-    void characteristics_isEmpty() {
+    void characteristics() {
         assertTrue(ResultCollector.collector().characteristics().isEmpty());
+    }
+
+    @Test
+    void optional5() {
+        Result<List<Optional<Integer>>, List<String>> result = Stream.of(
+                OptionalResult.<Integer, String>ok(1),
+                OptionalResult.<Integer, String>empty(),
+                OptionalResult.<Integer, String>ok(3),
+                OptionalResult.<Integer, String>empty(),
+                OptionalResult.<Integer, String>ok(2)
+        ).collect(ResultCollector.collector());
+
+        assertTrue(result.isOk());
+        assertEquals(Optional.of(List.of(Optional.of(1), Optional.empty(), Optional.of(3), Optional.empty(), Optional.of(2))), result.optionalValue());
+    }
+
+    @Test
+    void optionalError() {
+        Result<List<Optional<Integer>>, List<String>> result = Stream.of(
+                OptionalResult.<Integer, String>ok(1),
+                OptionalResult.<Integer, String>empty(),
+                OptionalResult.<Integer, String>ok(3),
+                OptionalResult.<Integer, String>err("oops"),
+                OptionalResult.<Integer, String>ok(2)
+        ).collect(ResultCollector.collector());
+        assertTrue(result.isError());
+        assertEquals(Optional.of(List.of("oops")), result.error());
     }
 }

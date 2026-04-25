@@ -22,7 +22,7 @@ import java.util.function.Supplier;
  * @param <E> the type of the error.
  */
 public sealed interface OptionalResult<T, E>
-        extends Shared<E, OptionalResult<T, E>>
+        extends Shared<E, OptionalResult<T, E>>, ResultWithValue<Optional<T>, E>
         permits Empty, OptErr, Present {
 
     /**
