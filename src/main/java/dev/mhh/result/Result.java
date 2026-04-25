@@ -3,6 +3,8 @@ package dev.mhh.result;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * A result type that represents either a successful value or an error.
@@ -103,6 +105,28 @@ public sealed interface Result<T, E>
     Result<T, E> verify(Function<T, VoidResult<E>> verifier);
 
     /**
+     * Verifies the success value using the given predicate.
+     * If verification fails, the returned error replaces this result.
+     * If this is an error result, the predicate is not called.
+     *
+     * @param predicate the predicate to test the value.
+     * @param errorSupplier the supplier of the error to return if the predicate fails.
+     * @return this result if verification passes, or an error result if verification fails.
+     */
+    Result<T, E> verify(Predicate<T> predicate, Supplier<E> errorSupplier);
+
+    /**
+     * Verifies the success value using the given predicate.
+     * If verification fails, the returned error replaces this result.
+     * If this is an error result, the predicate is not called.
+     *
+     * @param predicate the predicate to test the value.
+     * @param error the error to return if the predicate fails.
+     * @return this result if verification passes, or an error result if verification fails.
+     */
+    Result<T, E> verify(Predicate<T> predicate, E error);
+
+    /**
      * Converts this {@code Result} to a {@link VoidResult}, discarding the success value.
      * An ok result becomes {@link VoidResult#ok()}, and an error result remains an error.
      *
@@ -142,4 +166,26 @@ public sealed interface Result<T, E>
      * @throws NullPointerException if the mapper is null and this is an ok result.
      */
     <R> OptionalResult<R, E> flatMapWithOptionalResult(Function<T, OptionalResult<R, E>> mapper);
+
+    /**
+     * Filter the value of this result using the given predicate.
+     * Returns an empty result if the predicate returns false. Otherwise, returns this result as an `OptionalResult`.
+     * If this is an error result, the filter is not called and the error is passed through.
+     *
+     * @param filter a predicate that returns true if the value should be kept, false otherwise.
+     * @return this result if the filter function returns true, otherwise an empty result.
+     * @throws NullPointerException if the filter is null and this is a present result.
+     */
+    OptionalResult<T, E> filter(Predicate<T> filter);
+
+    /**
+     * For an Ok {@code Result} it gives back the value.
+     * For an Err {@code Result} it will throw the exception provided by the {@code exceptionSupplier}
+     * @param exceptionSupplier Supplier of the exception to throw if {@code Result} is an error
+     * @return the value of the {@code Result}
+     * @param <X> Type of exception to throw if {@code Result} is an error
+     * @throws X If the {@code Result} is an error
+     * @throws NullPointerException If the {@code Result} is an error and the {@code exceptionSupplier} or its return is null
+     */
+    <X extends Throwable> T orElseThrow(Function<E, X> exceptionSupplier) throws X;
 }

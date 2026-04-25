@@ -131,7 +131,7 @@ class VoidResultTest {
     @Test
     void consumeErrorWhenOk() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = ok.consumeError(_ -> consumed.set(true));
+        final var consumedResult = ok.consumeError(_x ->consumed.set(true));
 
         assertUnchangedOk(consumedResult);
         assertUnchangedOk(ok);
@@ -279,5 +279,144 @@ class VoidResultTest {
 
         assertUnchangedErr(verified);
         assertUnchangedErr(error10);
+    }
+
+    @Test
+    void orElseThrowWhenOk() {
+        final var called = new AtomicBoolean(false);
+        ok.orElseThrow(_x ->{
+            called.set(true);
+            return new RuntimeException("Error");
+        });
+
+        assertUnchangedOk(ok);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void orElseThrowWhenErr() {
+        final var thrown = assertThrows(RuntimeException.class, () -> error10.orElseThrow(x-> new RuntimeException("Error: " + x)));
+
+        assertEquals("Error: 10", thrown.getMessage());
+        assertUnchangedErr(error10);
+    }
+
+    @Test
+    void okIfWhenTrue() {
+        final var ok = VoidResult.okIf(true, 250L);
+        assertUnchangedOk(ok);
+    }
+
+    @Test
+    void okIfWhenFalse() {
+        final var ok = VoidResult.okIf(false, 10L);
+        assertUnchangedErr(ok);
+    }
+
+    @Test
+    void okIfSupplierWhenTrue() {
+        final var called = new AtomicBoolean(false);
+        final var ok = VoidResult.okIf(true, () -> {
+            called.set(true);
+            return 10L;
+        });
+        assertUnchangedOk(ok);
+        assertFalse(called.get());
+    }
+
+    @Test
+    void okIfSupplierWhenFalse() {
+        final var called = new AtomicBoolean(false);
+        final var error = VoidResult.okIf(false, () -> {
+            called.set(true);
+            return 10L;
+        });
+        assertUnchangedErr(error);
+        assertTrue(called.get());
+    }
+
+    @Test
+    void validateWhenTrue() {
+        final var predicateCalled = new AtomicBoolean(false);
+
+        final var validateFunc = VoidResult.<Long, Long>validate(x -> {
+            predicateCalled.set(true);
+            return x > 5;
+        }, 10L);
+
+        assertFalse(predicateCalled.get());
+
+        final var result = validateFunc.apply(10L);
+
+        assertTrue(predicateCalled.get());
+
+        assertUnchangedOk(result);
+    }
+
+    @Test
+    void validateWhenFalse() {
+        final var predicateCalled = new AtomicBoolean(false);
+
+        final var validateFunc = VoidResult.<Long, Long>validate(x -> {
+            predicateCalled.set(true);
+            return x < 5;
+        }, 10L);
+
+        assertFalse(predicateCalled.get());
+
+        final var result = validateFunc.apply(10L);
+
+        assertTrue(predicateCalled.get());
+
+        assertUnchangedErr(result);
+    }
+
+    @Test
+    void validateSupplierWhenTrue() {
+        final var predicateCalled = new AtomicBoolean(false);
+        final var errorSupplierCalled = new AtomicBoolean(false);
+
+        final var validateFunc = VoidResult.<Long, Long>validate(x -> {
+            predicateCalled.set(true);
+            return x > 5;
+        }, () -> {
+            errorSupplierCalled.set(true);
+            return 10L;
+        });
+
+        assertFalse(predicateCalled.get());
+        assertFalse(errorSupplierCalled.get());
+
+        final var result = validateFunc.apply(10L);
+
+        assertTrue(predicateCalled.get());
+        assertFalse(errorSupplierCalled.get());
+
+        assertUnchangedOk(result);
+    }
+
+    @Test
+    void validateSupplierWhenFalse() {
+        final var predicateCalled = new AtomicBoolean(false);
+        final var errorSupplierCalled = new AtomicBoolean(false);
+
+        final var validateFunc = VoidResult.<Long, Long>validate(x -> {
+            predicateCalled.set(true);
+            return x < 5;
+        }, () -> {
+            errorSupplierCalled.set(true);
+            return 10L;
+        });
+
+        assertFalse(predicateCalled.get());
+        assertFalse(errorSupplierCalled.get());
+
+        final var result = validateFunc.apply(10L);
+
+        assertTrue(predicateCalled.get());
+        assertTrue(errorSupplierCalled.get());
+
+        assertUnchangedErr(result);
     }
 }

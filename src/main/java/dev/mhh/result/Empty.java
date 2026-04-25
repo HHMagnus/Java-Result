@@ -9,9 +9,38 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
+    private static final Empty<?, ?> EMPTY = new Empty<>();
+
+    @SuppressWarnings("unchecked")
+    static <T, E> Empty<T, E> empty() {
+        return (Empty<T, E>) EMPTY;
+    }
+
     @Override
     public Optional<T> optionalValue() {
         return Optional.empty();
+    }
+
+    @Override
+    public boolean isPresent() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return true;
+    }
+
+    @Override
+    public OptionalResult<T, E> runIfPresent(Runnable runnable) {
+        return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> runIfEmpty(Runnable runnable) {
+        Objects.requireNonNull(runnable);
+        runnable.run();
+        return this;
     }
 
     @Override
@@ -27,28 +56,27 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     @Override
     public Result<T, E> toResult(Supplier<E> errorIfEmpty) {
         Objects.requireNonNull(errorIfEmpty);
-        final var error = errorIfEmpty.get();
+        final var error = Objects.requireNonNull(errorIfEmpty.get());
         return Result.err(error);
     }
 
     @Override
     public <R> OptionalResult<R, E> map(Function<Optional<T>, Optional<R>> mapper) {
         Objects.requireNonNull(mapper);
-        final var optional = mapper.apply(Optional.empty());
-        return optional.map(OptionalResult::<R, E>ok)
-                .orElse(OptionalResult.empty());
+        final var optional = Objects.requireNonNull(mapper.apply(Optional.empty()));
+        return OptionalResult.okOptional(optional);
     }
 
     @Override
     public <R> OptionalResult<R, E> flatMap(Function<Optional<T>, OptionalResult<R, E>> mapper) {
         Objects.requireNonNull(mapper);
-        return mapper.apply(Optional.empty());
+        return Objects.requireNonNull(mapper.apply(Optional.empty()));
     }
 
     @Override
     public <R> Result<R, E> flatMapWithResult(final Function<Optional<T>, Result<R, E>> mapper) {
         Objects.requireNonNull(mapper);
-        return mapper.apply(Optional.empty());
+        return Objects.requireNonNull(mapper.apply(Optional.empty()));
     }
 
     @Override
@@ -61,13 +89,30 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     @Override
     public OptionalResult<T, E> verify(final Function<Optional<T>, VoidResult<E>> verifier) {
         Objects.requireNonNull(verifier);
-        final var voidResult = verifier.apply(Optional.empty());
+        final var voidResult = Objects.requireNonNull(verifier.apply(Optional.empty()));
         return voidResult.toOptionalResult();
+    }
+
+    @Override
+    public OptionalResult<T, E> verify(Predicate<Optional<T>> predicate, E error) {
+        return verify(VoidResult.validate(predicate, error));
+    }
+
+    @Override
+    public OptionalResult<T, E> verify(Predicate<Optional<T>> predicate, Supplier<E> errorSupplier) {
+        return verify(VoidResult.validate(predicate, errorSupplier));
     }
 
     @Override
     public OptionalResult<T, E> filter(final Predicate<T> filter) {
         return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> or(Supplier<Optional<T>> supplier) {
+        Objects.requireNonNull(supplier);
+        final var optional = Objects.requireNonNull(supplier.get());
+        return OptionalResult.okOptional(optional);
     }
 
     @Override
@@ -93,6 +138,27 @@ public record Empty<T, E>() implements OptionalResult<T, E>, Serializable {
     @Override
     public OptionalResult<T, E> verifyValue(final Function<T, VoidResult<E>> verifier) {
         return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> verifyValue(Predicate<T> predicate, E error) {
+        return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> verifyValue(Predicate<T> predicate, Supplier<E> errorSupplier) {
+        return this;
+    }
+
+    @Override
+    public <X extends Throwable> Optional<T> orElseThrow(Function<E, X> exceptionSupplier) throws X {
+        return Optional.empty();
+    }
+
+    @Override
+    public <X extends Throwable> T orElseThrow(Supplier<T> ifEmpty, Function<E, X> exceptionSupplier) throws X {
+        Objects.requireNonNull(ifEmpty);
+        return Objects.requireNonNull(ifEmpty.get());
     }
 
     @Override

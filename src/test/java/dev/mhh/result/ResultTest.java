@@ -145,7 +145,7 @@ class ResultTest {
     @Test
     void consumeWhenOk() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = ok10.consume(_ -> consumed.set(true));
+        final var consumedResult = ok10.consume(_x ->consumed.set(true));
 
         assertUnchangedOk(consumedResult);
         assertUnchangedOk(ok10);
@@ -156,7 +156,7 @@ class ResultTest {
     @Test
     void consumeWhenErr() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = error10.consume(_ -> consumed.set(true));
+        final var consumedResult = error10.consume(_x ->consumed.set(true));
 
         assertUnchangedErr(consumedResult);
         assertUnchangedErr(error10);
@@ -181,7 +181,7 @@ class ResultTest {
     @Test
     void verifyWhenError() {
         final var consumed = new AtomicBoolean(false);
-        final var error20 = error10.verify(_ -> {
+        final var error20 = error10.verify(_x ->{
             consumed.set(true);
             return VoidResult.ok();
         });
@@ -212,7 +212,7 @@ class ResultTest {
     @Test
     void verifyErrWhenError() {
         final var consumed = new AtomicBoolean(false);
-        final var error10Still = error10.verify(_ -> {
+        final var error10Still = error10.verify(_x ->{
             consumed.set(true);
             return VoidResult.err(250L);
         });
@@ -289,7 +289,7 @@ class ResultTest {
     @Test
     void consumeErrorWhenOk() {
         final var consumed = new AtomicBoolean(false);
-        final var consumedResult = ok10.consumeError(_ -> consumed.set(true));
+        final var consumedResult = ok10.consumeError(_x ->consumed.set(true));
 
         assertUnchangedOk(consumedResult);
         assertUnchangedOk(ok10);
@@ -365,7 +365,7 @@ class ResultTest {
     @Test
     void mapToOptionalEmptyWhenErr() {
         final var called = new AtomicBoolean(false);
-        final var mappedResult = error10.mapToOptional(_ -> {
+        final var mappedResult = error10.mapToOptional(_x ->{
             called.set(true);
             return Optional.empty();
         });
@@ -458,4 +458,143 @@ class ResultTest {
 
         assertFalse(called.get());
     }
+
+    @Test
+    void filterTrueWhenOk() {
+        final var mapped = ok10.filter(x -> x == 10);
+
+        assertTrue(mapped.isOk());
+        assertEquals(Optional.of(10L), mapped.optionalValue());
+        assertEquals(Optional.empty(), mapped.error());
+
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void filterFalseWhenOk() {
+        final var mapped = ok10.filter(x -> x != 10);
+
+        assertTrue(mapped.isOk());
+        assertEquals(Optional.empty(), mapped.optionalValue());
+        assertEquals(Optional.empty(), mapped.error());
+
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void filterWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = error10.filter(x -> {
+            called.set(true);
+            return x == 10;
+        });
+
+        assertTrue(mapped.isError());
+        assertEquals(Optional.of(10L), mapped.error());
+        assertEquals(Optional.empty(), mapped.optionalValue());
+
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void orElseThrowOk() {
+        final var called = new AtomicBoolean(false);
+        final var mapped = ok10.orElseThrow(e -> {
+            called.set(true);
+            return new RuntimeException("Error");
+        });
+
+        assertEquals(10L, mapped);
+        assertUnchangedOk(ok10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void orElseThrowErr() {
+        final var thrown = assertThrows(RuntimeException.class, () -> error10.orElseThrow(e -> new RuntimeException("Error: " + e)));
+
+        assertEquals("Error: 10", thrown.getMessage());
+        assertUnchangedErr(error10);
+    }
+
+    @Test
+    void verifyPredicateTrueWhenOk() {
+        final var result = ok10.verify(x -> x == 10, 250L);
+
+        assertUnchangedOk(result);
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void verifyPredicateFalseWhenOk() {
+        final var result = ok10.verify(x -> x != 10, 10L);
+
+        assertUnchangedErr(result);
+        assertUnchangedOk(ok10);
+    }
+
+    @Test
+    void verifyPredicateWhenErr() {
+        final var called = new AtomicBoolean(false);
+        final var result = error10.verify(x -> {
+            called.set(true);
+            return x == 10;
+        }, 250L);
+
+        assertUnchangedErr(result);
+        assertUnchangedErr(error10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void verifyPredicateErrSupplierTrueWhenOk() {
+        final var called = new AtomicBoolean(false);
+        final var result = ok10.verify(x -> x == 10, () -> {
+            called.set(true);
+            return 250L;
+        });
+
+        assertUnchangedOk(result);
+        assertUnchangedOk(ok10);
+
+        assertFalse(called.get());
+    }
+
+    @Test
+    void verifyPredicateErrSupplierFalseWhenOk() {
+        final var called = new AtomicBoolean(false);
+        final var result = ok10.verify(x -> x != 10, () -> {
+            called.set(true);
+            return 10L;
+        });
+
+        assertUnchangedErr(result);
+        assertUnchangedOk(ok10);
+
+        assertTrue(called.get());
+    }
+
+    @Test
+    void verifyPredicateErrSupplierWhenErr() {
+        final var predicateCalled = new AtomicBoolean(false);
+        final var errSupplierCalled = new AtomicBoolean(false);
+        final var result = error10.verify(x -> {
+            predicateCalled.set(true);
+            return x == 10;
+        }, () -> {
+            errSupplierCalled.set(true);
+            return 250L;
+        });
+
+        assertUnchangedErr(result);
+        assertUnchangedErr(error10);
+
+        assertFalse(predicateCalled.get());
+        assertFalse(errSupplierCalled.get());
+    }
+
 }

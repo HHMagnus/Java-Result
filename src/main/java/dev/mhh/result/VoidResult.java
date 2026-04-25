@@ -1,6 +1,9 @@
 package dev.mhh.result;
 
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
@@ -37,6 +40,82 @@ public sealed interface VoidResult<E>
      */
     static <E> VoidResult<E> err(E err) {
         return new VoidErr<>(err);
+    }
+
+    /**
+     * Creates an ok {@code VoidResult} if the given condition is true, otherwise an error {@code VoidResult} with the given {@code err}
+     *
+     * @param condition true = ok, false = error
+     * @param err the error value if {@code condition} is false
+     * @return ok {@code VoidResult} if condition is true, otherwise an error {@code VoidResult} with the given {@code err}
+     * @param <E> the type of the error
+     */
+    static <E> VoidResult<E> okIf(boolean condition, E err) {
+        return Optional.of(condition)
+                .filter(Predicate.isEqual(true))
+                .map(_x -> VoidResult.<E>ok())
+                .orElseGet(() -> VoidResult.err(err));
+    }
+
+    /**
+     * Creates an ok {@code VoidResult} if the given condition is true, otherwise an error {@code VoidResult} with the supplied {@code err}
+     *
+     * @param condition true = ok, false = error
+     * @param errSupplier a supplier for the error value if {@code condition} is false
+     * @return ok {@code VoidResult} if condition is true, otherwise an error {@code VoidResult} with the supplied {@code err}
+     * @param <E> the type of the error
+     */
+    static <E> VoidResult<E> okIf(boolean condition, Supplier<E> errSupplier) {
+        return Optional.of(condition)
+                .filter(Predicate.isEqual(true))
+                .map(_x -> VoidResult.<E>ok())
+                .orElseGet(() -> {
+                    final var err = Objects.requireNonNull(errSupplier.get());
+                    return VoidResult.err(err);
+                });
+    }
+
+    /**
+     * Creates a function that validates the input against a predicate, returning an ok {@code VoidResult} if true, otherwise an error {@code VoidResult} with the supplied {@code err}
+     *
+     * <p>To be used in the context of a verify:
+     * <pre> {@code Result.ok(10L)
+     *     .verify(validate(i -> i > 5, "i must be greater than 5"))
+     * }</pre>
+     *
+     * @param predicate the predicate to validate the input against
+     * @param err the error value if the predicate is false
+     * @return a function that validates the input against the predicate
+     * @param <T> the type of the input
+     * @param <E> the type of the error
+     */
+    static <T, E> Function<T, VoidResult<E>> validate(Predicate<T> predicate, E err) {
+        return value -> {
+            Objects.requireNonNull(predicate);
+            final var error = Objects.requireNonNull(err);
+            return okIf(predicate.test(value), error);
+        };
+    }
+
+    /**
+     * Creates a function that validates the input against a predicate, returning an ok {@code VoidResult} if true, otherwise an error {@code VoidResult} with the supplied {@code err}
+     *
+     * <p>To be used in the context of a verify:
+     * <pre> {@code Result.ok(10L)
+     *     .verify(validate(i -> i > 5, () -> "i must be greater than 5"))
+     * }</pre>
+     *
+     * @param predicate the predicate to validate the input against
+     * @param errSupplier the supplier of the error value if the predicate is false
+     * @return a function that validates the input against the predicate
+     * @param <T> the type of the input
+     * @param <E> the type of the error
+     */
+    static <T, E> Function<T, VoidResult<E>> validate(Predicate<T> predicate, Supplier<E> errSupplier) {
+        return value -> {
+            Objects.requireNonNull(predicate);
+            return okIf(predicate.test(value), errSupplier);
+        };
     }
 
     /**
@@ -98,4 +177,14 @@ public sealed interface VoidResult<E>
      * @throws NullPointerException if the supplier is null and this result is ok.
      */
     VoidResult<E> verify(Supplier<VoidResult<E>> supplier);
+
+    /**
+     * For an Ok {@code VoidResult} it does nothing.
+     * For an Err {@code VoidResult} it will throw the exception provided by the {@code exceptionSupplier}
+     * @param exceptionSupplier Supplier of the exception to throw if {@code VoidResult} is an error
+     * @param <X> Type of exception to throw if {@code VoidResult} is an error
+     * @throws X If the {@code VoidResult} is an error
+     * @throws NullPointerException If the {@code VoidResult} is an error and the {@code exceptionSupplier} or its return is null
+     */
+    <X extends Throwable> void orElseThrow(Function<E, X> exceptionSupplier) throws X;
 }

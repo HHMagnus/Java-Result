@@ -27,6 +27,11 @@ A type-safe Result library for Java, inspired by Rust's `Result<T, E>`. Instead 
 
 ## Quick start
 
+Import into a gradle project using:
+```groovy
+implementation 'dev.mhh:result:1.0.0'
+```
+
 Instead of throwing an exception, return a `Result`:
 
 ```java
@@ -80,18 +85,19 @@ If any step produces an error, the rest of the chain short-circuits — the erro
 
 The API follows consistent naming patterns:
 
-| Prefix / name | Meaning |
-|---|---|
-| `map` | Transform the **value** to a new type |
-| `mapError` | Transform the **error** to a new type |
-| `flatMap` | Transform the value into a new result and flatten (merge) it |
-| `consume` | Run a side effect with the **value** (returns the same result) |
-| `consumeError` | Run a side effect with the **error** |
-| `run` | Run a `Runnable` depending on the result state |
-| `verify` | Validate the value with a function returning `VoidResult` |
-| `value` | Suffix on `OptionalResult` methods — only acts when a value is **present** |
-| `ok` / `err` | Factory methods for construction |
-| `toResult` / `toVoidResult` / `toOptionalResult` | Convert between result types |
+| Prefix / name                                    | Meaning                                                                    |
+|--------------------------------------------------|----------------------------------------------------------------------------|
+| `map`                                            | Transform the **value** to a new type                                      |
+| `mapError`                                       | Transform the **error** to a new type                                      |
+| `flatMap`                                        | Transform the value into a new result and flatten (merge) it               |
+| `consume`                                        | Run a side effect with the **value** (returns the same result)             |
+| `consumeError`                                   | Run a side effect with the **error**                                       |
+| `run`                                            | Run a `Runnable` depending on the result state                             |
+| `verify`                                         | Validate the value with a function returning `VoidResult`                  |
+| `value`                                          | Suffix on `OptionalResult` methods — only acts when a value is **present** |
+| `filter`                                         | Checks a `Predicate<T>` similar to `Optional.filter`                        |
+| `ok` / `err`                                     | Factory methods for construction                                           |
+| `toResult` / `toVoidResult` / `toOptionalResult` | Convert between result types                                               |
 
 ### `value` suffix on `OptionalResult`
 
@@ -104,3 +110,14 @@ optionalResult.map(optional -> optional.map(String::toUpperCase));
 // Only runs when a value is present — empty passes through unchanged
 optionalResult.mapValue(String::toUpperCase);
 ```
+
+## `Optional`-like behaviour
+
+The `Result` types aims to be like `Optional`, but there are differences to ensure proper error handling:
+- The `ifPresent` naming pattern did not fit well, so it has been renamed to `consume`.
+  - Furthermore, there is no `ifPresentOrElse` method as those can be presented by an `consume` followed by `consumeError`.
+- There are no `get`, `orElse` or `orElseThrow` (without exception) methods as these will throw away the error without proper handling.
+  - Instead, use either `orElseThrow` with a given `exceptionSupplier` or switch over the values.
+- The `of` is called `ok` to be more expressive of an error also technically being an `of`.
+- There is no `stream` method as it would also throw away the error without proper handling.
+- `or` is only supported for `OptionalResult` and not `Result` as it would throw away the error without proper handling.

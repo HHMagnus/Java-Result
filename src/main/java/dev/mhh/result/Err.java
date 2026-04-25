@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public record Err<T, E>(E err) implements Result<T, E>, Serializable {
     public Err {
@@ -19,7 +21,7 @@ public record Err<T, E>(E err) implements Result<T, E>, Serializable {
     @Override
     public <N> Result<T, N> mapError(Function<E, N> mapper) {
         Objects.requireNonNull(mapper);
-        final var error = mapper.apply(err);
+        final var error = Objects.requireNonNull(mapper.apply(err));
         return Result.err(error);
     }
 
@@ -83,6 +85,16 @@ public record Err<T, E>(E err) implements Result<T, E>, Serializable {
     }
 
     @Override
+    public Result<T, E> verify(Predicate<T> predicate, Supplier<E> errorSupplier) {
+        return this;
+    }
+
+    @Override
+    public Result<T, E> verify(Predicate<T> predicate, E error) {
+        return this;
+    }
+
+    @Override
     public VoidResult<E> toVoidResult() {
         return VoidResult.err(err);
     }
@@ -100,5 +112,16 @@ public record Err<T, E>(E err) implements Result<T, E>, Serializable {
     @Override
     public <R> OptionalResult<R, E> flatMapWithOptionalResult(final Function<T, OptionalResult<R, E>> mapper) {
         return OptionalResult.err(err);
+    }
+
+    @Override
+    public OptionalResult<T, E> filter(Predicate<T> filter) {
+        return OptionalResult.err(err);
+    }
+
+    @Override
+    public <X extends Throwable> T orElseThrow(Function<E, X> exceptionSupplier) throws X {
+        Objects.requireNonNull(exceptionSupplier);
+        throw Objects.requireNonNull(exceptionSupplier.apply(err));
     }
 }

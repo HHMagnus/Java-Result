@@ -54,7 +54,7 @@ public record VoidErr<E>(E err) implements VoidResult<E>, Serializable {
     @Override
     public <N> VoidResult<N> mapError(Function<E, N> function) {
         Objects.requireNonNull(function);
-        final var error = function.apply(err);
+        final var error = Objects.requireNonNull(function.apply(err));
         return VoidResult.err(error);
     }
 
@@ -81,5 +81,11 @@ public record VoidErr<E>(E err) implements VoidResult<E>, Serializable {
     @Override
     public VoidResult<E> verify(Supplier<VoidResult<E>> consumer) {
         return this;
+    }
+
+    @Override
+    public <X extends Throwable> void orElseThrow(Function<E, X> exceptionSupplier) throws X {
+        Objects.requireNonNull(exceptionSupplier);
+        throw Objects.requireNonNull(exceptionSupplier.apply(err));
     }
 }

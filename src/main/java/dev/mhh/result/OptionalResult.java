@@ -65,6 +65,19 @@ public sealed interface OptionalResult<T, E>
     }
 
     /**
+     * Creates an {@code OptionalResult} from a value that can be null, producing a present result
+     * if the value is not null, or an empty result if it is null.
+     *
+     * @param value         the value that might be null
+     * @param <T>           the type of the value.
+     * @param <E>           the type of the error.
+     * @return a present {@code OptionalResult} if the value is not null, otherwise an empty {@code OptionalResult}.
+     */
+    static <T, E> OptionalResult<T, E> okNullable(T value) {
+        return okOptional(Optional.ofNullable(value));
+    }
+
+    /**
      * Creates an empty {@code OptionalResult}, representing a successful result with no value.
      *
      * @param <T> the type of the value.
@@ -72,7 +85,7 @@ public sealed interface OptionalResult<T, E>
      * @return an empty {@code OptionalResult}.
      */
     static <T, E> OptionalResult<T, E> empty() {
-        return new Empty<>();
+        return Empty.empty();
     }
 
     /**
@@ -87,6 +100,34 @@ public sealed interface OptionalResult<T, E>
     static <T, E> OptionalResult<T, E> err(E error) {
         return new OptErr<>(error);
     }
+
+    /**
+     * Returns true if this is a present result, false otherwise.
+     * @return true if this is a present result, false otherwise.
+     */
+    boolean isPresent();
+
+    /**
+     * Returns true if this is an empty result, false otherwise.
+     * @return true if this is an empty result, false otherwise.
+     */
+    boolean isEmpty();
+
+    /**
+     * Run the given runnable if the result is present.
+     * @param runnable to run. This only runs if the result is present.
+     * @return the result for fluent chaining.
+     * @throws NullPointerException if the runnable is null and the result is present.
+     */
+    OptionalResult<T, E> runIfPresent(Runnable runnable);
+
+    /**
+     * Run the given runnable if the result is empty.
+     * @param runnable to run. This only runs if the result is empty.
+     * @return the result for fluent chaining.
+     * @throws NullPointerException if the runnable is null and the result is empty.
+     */
+    OptionalResult<T, E> runIfEmpty(Runnable runnable);
 
     /**
      * Maps the error value to a different error type, leaving present and empty states unchanged.
@@ -171,12 +212,42 @@ public sealed interface OptionalResult<T, E>
     OptionalResult<T, E> verify(Function<Optional<T>, VoidResult<E>> verifier);
 
     /**
+     * Verifies the {@link Optional} value using the given predicate.
+     * If verification fails, the returned error replaces this result.
+     * If this is an error result, the predicate is not called.
+     *
+     * @param predicate the predicate to test the optional value.
+     * @param error the error to return if the predicate fails.
+     * @return this result if verification passes, or an error result if verification fails.
+     */
+    OptionalResult<T, E> verify(Predicate<Optional<T>> predicate, E error);
+
+    /**
+     * Verifies the {@link Optional} value using the given predicate.
+     * If verification fails, the returned error replaces this result.
+     * If this is an error result, the predicate is not called.
+     *
+     * @param predicate the predicate to test the optional value.
+     * @param errorSupplier the supplier of the error to return if the predicate fails.
+     * @return this result if verification passes, or an error result if verification fails.
+     */
+    OptionalResult<T, E> verify(Predicate<Optional<T>> predicate, Supplier<E> errorSupplier);
+
+    /**
      * Filters the present value, leaving empty and error states unchanged.
+     *
      * @param filter a predicate that returns true if the value should be kept, false otherwise.
      * @return this result if the filter function returns true, otherwise an empty result.
      * @throws NullPointerException if the filter is null and this is a present result.
      */
     OptionalResult<T, E> filter(Predicate<T> filter);
+
+    /**
+     * Replaces the empty value with the result of the given supplier. Nothing otherwise changes.
+     * @param supplier the supplier of the new value.
+     * @return if this is an empty result, the result of the supplier, otherwise this result.
+     */
+    OptionalResult<T, E> or(Supplier<Optional<T>> supplier);
 
     /**
      * Maps the present value to a new value, leaving empty and error states unchanged.
@@ -232,4 +303,51 @@ public sealed interface OptionalResult<T, E>
      * @throws NullPointerException if the verifier is null and this is a present result.
      */
     OptionalResult<T, E> verifyValue(Function<T, VoidResult<E>> verifier);
+
+    /**
+     * Verifies the present value using the given predicate.
+     * If verification fails, the returned error replaces this result.
+     * If this is an error result, the predicate is not called.
+     *
+     * @param predicate the predicate to test the value.
+     * @param error the error to return if the predicate fails.
+     * @return this result if verification passes, or an error result if verification fails.
+     */
+    OptionalResult<T, E> verifyValue(Predicate<T> predicate, E error);
+
+    /**
+     * Verifies the present value using the given predicate.
+     * If verification fails, the returned error replaces this result.
+     * If this is an error result, the predicate is not called.
+     *
+     * @param predicate the predicate to test the value.
+     * @param errorSupplier the supplier of the error to return if the predicate fails.
+     * @return this result if verification passes, or an error result if verification fails.
+     */
+    OptionalResult<T, E> verifyValue(Predicate<T> predicate, Supplier<E> errorSupplier);
+
+    /**
+     * For an Ok (Present or Empty) {@code OptionalResult} it gives back the optional value.
+     * For an Err {@code OptionalResult} it will throw the exception provided by the {@code exceptionSupplier}
+     * @param exceptionSupplier Supplier of the exception to throw if {@code OptionalResult} is an error
+     * @param <X> Type of exception to throw if {@code OptionalResult} is an error
+     * @return The present value if {@code OptionalResult} is Ok
+     * @throws X If the {@code OptionalResult} is an error
+     * @throws NullPointerException If the {@code OptionalResult} is an error and the supplier or its return is null
+     */
+    <X extends Throwable> Optional<T> orElseThrow(Function<E, X> exceptionSupplier) throws X;
+
+    /**
+     * For a Present {@code OptionalResult} it gives back the value.
+     * For an Empty {@code OptionalResult} it will return the value provided by the {@code ifEmpty} supplier.
+     * For an Err {@code OptionalResult} it will throw the exception provided by the supplier.
+     * @param ifEmpty Supplier of the value to return if {@code OptionalResult} is empty
+     * @param exceptionSupplier Supplier of the exception to throw if {@code OptionalResult} is an error
+     * @param <X> Type of exception to throw if {@code OptionalResult} is an error
+     * @return The present value if {@code OptionalResult} is Ok otherwise the value provided by the {@code ifEmpty} supplier
+     * @throws X If the {@code OptionalResult} is an error
+     * @throws NullPointerException If the {@code OptionalResult} is an error and the {@code exceptionSupplier} or its return is null
+     * @throws NullPointerException If the {@code OptionalResult} is empty and the {@code ifEmpty} or its return is null
+     */
+    <X extends Throwable> T orElseThrow(Supplier<T> ifEmpty, Function<E, X> exceptionSupplier) throws X;
 }

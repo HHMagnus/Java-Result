@@ -1,9 +1,12 @@
 plugins {
     id 'java'
+    id 'maven-publish'
+    id 'signing'
+    id 'com.gradleup.nmcp'
 }
 
 group = 'dev.mhh'
-version = '1.0-SNAPSHOT'
+version = (System.getenv("VERSION") ?: "0.0.1-SNAPSHOT").replaceAll(/^v/, "")
 
 repositories {
     mavenCentral()
@@ -17,4 +20,65 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from(components.java)
+
+            groupId = 'dev.mhh'
+            artifactId = 'result'
+            version = project.version
+
+            pom {
+                name = 'Result<T, E> for Java'
+                description = 'A rust-like Result<T, E> for Java.'
+                url = 'https://github.com/HHMagnus/Java-Result'
+
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'HHMagnus'
+                        name = 'Magnus Hindborg Hovmann'
+                        email = 'magnus@mhh.dev'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/HHMagnus/Java-Result.git'
+                    developerConnection = 'scm:git:ssh://github.com/HHMagnus/Java-Result.git'
+                    url = 'https://github.com/HHMagnus/Java-Result'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/HHMagnus/Java-Result")
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
+}
+
+signing {
+    required { !version.endsWith("SNAPSHOT") && System.getenv("GPG_SECRET_KEY") != null }
+    def signingKey = System.getenv("GPG_SECRET_KEY")
+    def signingPassphrase = System.getenv("GPG_PASSPHRASE")
+    useInMemoryPgpKeys(signingKey, signingPassphrase)
+    sign publishing.publications.mavenJava
 }

@@ -19,9 +19,29 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
     }
 
     @Override
+    public boolean isPresent() {
+        return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public OptionalResult<T, E> runIfPresent(Runnable runnable) {
+        return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> runIfEmpty(Runnable runnable) {
+        return this;
+    }
+
+    @Override
     public <N> OptionalResult<T, N> mapError(Function<E, N> function) {
         Objects.requireNonNull(function);
-        final var error = function.apply(err);
+        final var error = Objects.requireNonNull(function.apply(err));
         return OptionalResult.err(error);
     }
 
@@ -61,7 +81,22 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
     }
 
     @Override
+    public OptionalResult<T, E> verify(Predicate<Optional<T>> predicate, E error) {
+        return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> verify(Predicate<Optional<T>> predicate, Supplier<E> errorSupplier) {
+        return this;
+    }
+
+    @Override
     public OptionalResult<T, E> filter(final Predicate<T> filter) {
+        return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> or(Supplier<Optional<T>> supplier) {
         return this;
     }
 
@@ -88,6 +123,28 @@ public record OptErr<T, E>(E err) implements OptionalResult<T, E>, Serializable 
     @Override
     public OptionalResult<T, E> verifyValue(final Function<T, VoidResult<E>> verifier) {
         return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> verifyValue(Predicate<T> predicate, E error) {
+        return this;
+    }
+
+    @Override
+    public OptionalResult<T, E> verifyValue(Predicate<T> predicate, Supplier<E> errorSupplier) {
+        return this;
+    }
+
+    @Override
+    public <X extends Throwable> Optional<T> orElseThrow(Function<E, X> exceptionSupplier) throws X {
+        Objects.requireNonNull(exceptionSupplier);
+        throw Objects.requireNonNull(exceptionSupplier.apply(err));
+    }
+
+    @Override
+    public <X extends Throwable> T orElseThrow(Supplier<T> ifEmpty, Function<E, X> exceptionSupplier) throws X {
+        Objects.requireNonNull(exceptionSupplier);
+        throw Objects.requireNonNull(exceptionSupplier.apply(err));
     }
 
     @Override

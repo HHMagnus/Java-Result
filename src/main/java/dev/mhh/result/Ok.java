@@ -5,6 +5,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
     @Override
@@ -61,14 +63,14 @@ public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
     @Override
     public <R> Result<R, E> map(Function<T, R> mapper) {
         Objects.requireNonNull(mapper);
-        final var mapped = mapper.apply(value);
+        final var mapped = Objects.requireNonNull(mapper.apply(value));
         return Result.ok(mapped);
     }
 
     @Override
     public <R> Result<R, E> flatMap(Function<T, Result<R, E>> mapper) {
         Objects.requireNonNull(mapper);
-        return mapper.apply(value);
+        return Objects.requireNonNull(mapper.apply(value));
     }
 
     @Override
@@ -81,8 +83,18 @@ public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
     @Override
     public Result<T, E> verify(Function<T, VoidResult<E>> verifier) {
         Objects.requireNonNull(verifier);
-        final var voidResult = verifier.apply(value);
+        final var voidResult = Objects.requireNonNull(verifier.apply(value));
         return voidResult.toResult(value);
+    }
+
+    @Override
+    public Result<T, E> verify(Predicate<T> predicate, Supplier<E> errorSupplier) {
+        return verify(VoidResult.validate(predicate, errorSupplier));
+    }
+
+    @Override
+    public Result<T, E> verify(Predicate<T> predicate, E error) {
+        return verify(VoidResult.validate(predicate, error));
     }
 
     @Override
@@ -98,13 +110,26 @@ public record Ok<T, E>(T value) implements Result<T, E>, Serializable {
     @Override
     public <R> OptionalResult<R, E> mapToOptional(final Function<T, Optional<R>> mapper) {
         Objects.requireNonNull(mapper);
-        final var optional = mapper.apply(value);
+        final var optional = Objects.requireNonNull(mapper.apply(value));
         return OptionalResult.okOptional(optional);
     }
 
     @Override
     public <R> OptionalResult<R, E> flatMapWithOptionalResult(final Function<T, OptionalResult<R, E>> mapper) {
         Objects.requireNonNull(mapper);
-        return mapper.apply(value);
+        return Objects.requireNonNull(mapper.apply(value));
+    }
+
+    @Override
+    public OptionalResult<T, E> filter(Predicate<T> filter) {
+        Objects.requireNonNull(filter);
+        final var optional = Optional.of(value)
+                .filter(filter);
+        return OptionalResult.okOptional(optional);
+    }
+
+    @Override
+    public <X extends Throwable> T orElseThrow(Function<E, X> exceptionSupplier) throws X {
+        return value;
     }
 }
