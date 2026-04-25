@@ -67,10 +67,9 @@ public final class ResultCollector<T, E> implements Collector<Result<T, E>, Resu
     @Override
     public BiConsumer<ResultCollector<T, E>, Result<T, E>> accumulator() {
         return (collector, result) -> {
-            switch (result) {
-                case Ok(var value) -> collector.ok.add(value);
-                case Err(var error) -> collector.err.add(error);
-            }
+            result
+                    .consume(value -> collector.ok.add(value))
+                    .consumeError(error -> collector.err.add(error));
         };
     }
 
