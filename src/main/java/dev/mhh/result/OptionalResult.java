@@ -21,7 +21,9 @@ import java.util.function.Supplier;
  * @param <T> the type of the value.
  * @param <E> the type of the error.
  */
-public interface OptionalResult<T, E> extends Shared<E, OptionalResult<T, E>> {
+public sealed interface OptionalResult<T, E>
+        extends Shared<E, OptionalResult<T, E>>
+        permits Empty, OptErr, Present {
 
     /**
      * Returns the value wrapped in an {@link Optional}.
