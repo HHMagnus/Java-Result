@@ -6,13 +6,10 @@ A type-safe Result library for Java, inspired by Rust's `Result<T, E>`. Instead 
 
 - **Pattern matching** — use `switch` expressions directly over result types
 - **Sealed interfaces and records** — no class hierarchies; everything is a closed, known type
-- **Cyclomatic complexity of 1** — no `if` statements in the library itself
 - **Fluent chaining** — convert and transform across all three result types
 - **Serializable by default** — as long as your generic types are serializable
 - **100% test coverage** — quite easy without branching
-
-> **Note:** Because errors are explicit types, combining results (e.g. `Result.combine(...)`) and working with lists of results require manual handling.
-
+- **List and combination support** — stream over lists of results or combine them into a single result.
 ---
 
 ## The three result types
@@ -79,6 +76,40 @@ VoidResult<String> result = Result.ok(rawInput)
 
 If any step produces an error, the rest of the chain short-circuits — the error is carried through unchanged.
 
+---
+
+## Collecting streams of results
+
+`ResultCollector` is a standard `Collector` that partitions a stream of `Result` values into either a list of all successes or a list of all errors. The stream is always consumed in full before the final result is determined.
+
+```java
+Result<List<Integer>, List<String>> result = Stream.of(
+        Result.ok(1),
+        Result.err("oops"),
+        Result.ok(3)
+    )
+    .collect(ResultCollector.collector());
+```
+
+If every element is `Ok`, the returned result is `Ok` containing a list of all unwrapped values. If any element is `Err`, the returned result is `Err` containing a list of all unwrapped errors. Encounter order is preserved in both cases.
+ 
+---
+
+## Combining independent results
+
+`ResultCombiner` combines 2–8 independent `Result` values using a function. All results are evaluated up front; if any are errors, all errors are collected and returned together. The combining function is only invoked when every input is successful.
+
+```java
+Result<Address, List<String>> address = ResultCombiner.combine(
+    Address::new,
+    parseStreet(input),
+    parseCity(input),
+    parsePostalCode(input)
+);
+```
+
+This is useful for validating multiple independent fields simultaneously and surfacing all failures at once, rather than short-circuiting on the first error as fluent chaining does.
+ 
 ---
 
 ## Naming conventions
